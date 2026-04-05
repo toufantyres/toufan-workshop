@@ -1,0 +1,1500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="theme-color" content="#0a0a0a">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Toufan Workshop">
+<title>Toufan Workshop System</title>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Exo+2:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#080808;--s1:#101010;--s2:#181818;--s3:#202020;--s4:#282828;--border:#2c2c2c;--gold:#f0a500;--gold2:#ffc840;--cyan:#00d4ff;--green:#00e676;--orange:#ff6d00;--red:#ff1744;--purple:#d500f9;--blue:#2979ff;--text:#f0f0f0;--text2:#888;--text3:#444;}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+body{background:var(--bg);color:var(--text);font-family:'Exo 2',sans-serif;font-size:14px;min-height:100vh;overflow-x:hidden;}
+h1,h2,h3,h4{font-family:'Rajdhani',sans-serif;letter-spacing:0.5px;}
+
+/* LOGIN */
+.login-screen{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:20px;background:var(--bg);}
+.login-logo{font-family:'Rajdhani',sans-serif;font-size:48px;font-weight:700;color:var(--gold);letter-spacing:4px;margin-bottom:4px;}
+.login-sub{font-size:12px;color:var(--text3);letter-spacing:2px;text-transform:uppercase;margin-bottom:40px;}
+.login-card{background:var(--s1);border:1px solid var(--border);border-radius:16px;padding:28px 24px;width:100%;max-width:380px;}
+.login-title{font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700;margin-bottom:20px;color:var(--text);}
+.form-group{margin-bottom:14px;}
+.form-label{display:block;font-size:10px;color:var(--text2);text-transform:uppercase;letter-spacing:1px;margin-bottom:5px;}
+.form-control{width:100%;background:var(--s3);border:1px solid var(--border);border-radius:8px;padding:11px 14px;color:var(--text);font-size:14px;font-family:'Exo 2',sans-serif;outline:none;transition:border-color 0.2s;}
+.form-control:focus{border-color:var(--gold);}
+select.form-control{cursor:pointer;}
+textarea.form-control{resize:vertical;min-height:70px;}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:11px 18px;border-radius:8px;border:none;cursor:pointer;font-family:'Rajdhani',sans-serif;font-size:15px;font-weight:700;letter-spacing:1px;transition:all 0.2s;text-transform:uppercase;width:100%;}
+.btn-gold{background:var(--gold);color:#000;}
+.btn-gold:hover{background:var(--gold2);}
+.btn-green{background:var(--green);color:#000;}
+.btn-red{background:var(--red);color:#fff;}
+.btn-wa{background:#25d366;color:#fff;}
+.btn-ghost{background:var(--s3);border:1px solid var(--border);color:var(--text2);}
+.btn-cyan{background:var(--cyan);color:#000;}
+.btn-sm{padding:6px 12px;font-size:12px;width:auto;}
+.login-err{color:var(--red);font-size:12px;text-align:center;margin-top:10px;min-height:18px;}
+
+/* APP SHELL */
+.app-shell{display:none;flex-direction:column;min-height:100vh;}
+.app-shell.visible{display:flex;}
+.topbar{background:var(--s1);border-bottom:1px solid var(--border);padding:10px 16px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
+.topbar-left{display:flex;align-items:center;gap:10px;}
+.topbar-logo{font-family:'Rajdhani',sans-serif;font-size:20px;font-weight:700;color:var(--gold);letter-spacing:2px;}
+.topbar-branch{font-size:10px;color:var(--text3);letter-spacing:0.5px;}
+.topbar-right{display:flex;align-items:center;gap:8px;}
+.user-pill{background:var(--s3);border:1px solid var(--border);border-radius:20px;padding:4px 10px;font-size:11px;color:var(--text2);display:flex;align-items:center;gap:6px;}
+.user-dot{width:7px;height:7px;border-radius:50%;background:var(--green);}
+.logout-btn{background:transparent;border:none;color:var(--text3);cursor:pointer;font-size:18px;padding:4px;}
+
+/* BOTTOM NAV */
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:var(--s1);border-top:1px solid var(--border);display:flex;z-index:100;padding-bottom:env(safe-area-inset-bottom);}
+.nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:9px 4px;cursor:pointer;color:var(--text3);border:none;background:none;font-family:'Rajdhani',sans-serif;font-size:10px;letter-spacing:0.5px;transition:color 0.2s;}
+.nav-btn.active{color:var(--gold);}
+.nav-btn .ni{font-size:19px;}
+
+/* PAGES */
+.page{display:none;padding:14px;padding-bottom:75px;}
+.page.active{display:block;}
+
+/* CARDS */
+.card{background:var(--s1);border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:10px;}
+.card-row{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;}
+.card-title{font-family:'Rajdhani',sans-serif;font-size:17px;font-weight:700;}
+.card-sub{font-size:12px;color:var(--text2);margin-top:2px;}
+.badge{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:20px;font-size:10px;font-family:'Rajdhani',sans-serif;font-weight:700;letter-spacing:0.5px;text-transform:uppercase;}
+.b-diagnostic{background:rgba(255,23,68,.12);color:var(--red);border:1px solid rgba(255,23,68,.25);}
+.b-service{background:rgba(255,109,0,.12);color:var(--orange);border:1px solid rgba(255,109,0,.25);}
+.b-quality{background:rgba(240,165,0,.12);color:var(--gold);border:1px solid rgba(240,165,0,.25);}
+.b-testdrive{background:rgba(0,212,255,.12);color:var(--cyan);border:1px solid rgba(0,212,255,.25);}
+.b-ready{background:rgba(0,230,118,.12);color:var(--green);border:1px solid rgba(0,230,118,.25);}
+.b-hold{background:rgba(213,0,249,.12);color:var(--purple);border:1px solid rgba(213,0,249,.25);}
+.b-waiting{background:rgba(41,121,255,.12);color:var(--blue);border:1px solid rgba(41,121,255,.25);}
+.b-paid{background:rgba(0,230,118,.12);color:var(--green);border:1px solid rgba(0,230,118,.25);}
+.b-urgent{background:rgba(255,23,68,.12);color:var(--red);border:1px solid rgba(255,23,68,.25);}
+.b-express{background:rgba(240,165,0,.12);color:var(--gold);border:1px solid rgba(240,165,0,.25);}
+
+/* RECEPTION BOARD */
+.prog-scroll{overflow-x:auto;padding-bottom:8px;}
+.prog-table{display:flex;gap:0;min-width:fit-content;border:1px solid var(--border);border-radius:10px;overflow:hidden;}
+.prog-col{min-width:160px;border-right:1px solid var(--border);background:var(--s1);}
+.prog-col:last-child{border-right:none;}
+.prog-col-head{padding:12px 10px;text-align:center;border-bottom:1px solid var(--border);}
+.prog-icon{font-size:22px;}
+.prog-label{font-family:'Rajdhani',sans-serif;font-size:11px;font-weight:700;letter-spacing:0.5px;text-transform:uppercase;margin-top:4px;}
+.prog-body{padding:8px;display:flex;flex-direction:column;gap:6px;min-height:100px;}
+.prog-item{background:var(--s2);border-radius:6px;padding:8px;text-align:center;border:1px solid var(--border);cursor:pointer;}
+.prog-plate{font-family:'Rajdhani',sans-serif;font-size:14px;font-weight:700;}
+.prog-car{font-size:10px;color:var(--text3);margin-top:2px;}
+.prog-inv{font-size:10px;margin-top:3px;}
+.empty-col{padding:16px 8px;text-align:center;color:var(--text3);font-size:11px;}
+
+/* DISPATCH */
+.dispatch-scroll{overflow-x:auto;padding-bottom:8px;}
+.dispatch-cols{display:flex;gap:10px;min-width:fit-content;}
+.d-col{background:var(--s1);border:1px solid var(--border);border-radius:10px;width:220px;flex-shrink:0;}
+.d-col-head{padding:12px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.d-mech{font-family:'Rajdhani',sans-serif;font-size:16px;font-weight:700;}
+.d-role{font-size:10px;color:var(--text3);margin-top:1px;}
+.d-cnt{font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700;color:var(--gold);}
+.d-col-body{padding:8px;display:flex;flex-direction:column;gap:7px;min-height:80px;}
+.d-job{background:var(--s2);border-left:3px solid var(--border);border-radius:7px;padding:10px;cursor:pointer;transition:all 0.15s;}
+.d-job:hover{background:var(--s3);}
+.d-job.st-diagnostic{border-left-color:var(--red);}
+.d-job.st-service{border-left-color:var(--orange);}
+.d-job.st-quality{border-left-color:var(--gold);}
+.d-job.st-testdrive{border-left-color:var(--cyan);}
+.d-job.st-ready{border-left-color:var(--green);}
+.d-job.st-hold{border-left-color:var(--purple);}
+.d-job.st-waiting{border-left-color:var(--blue);}
+.d-plate{font-family:'Rajdhani',sans-serif;font-size:15px;font-weight:700;color:var(--cyan);}
+.d-car{font-size:11px;color:var(--text2);margin-top:1px;}
+.d-svc{font-size:10px;color:var(--text3);margin-top:5px;line-height:1.4;}
+
+/* TICKER */
+.ticker{background:var(--s1);border-bottom:1px solid var(--border);padding:7px 0;overflow:hidden;white-space:nowrap;}
+.ticker-inner{display:inline-flex;animation:tick 25s linear infinite;}
+.tick-item{padding:0 32px;font-size:11px;color:var(--text2);}
+@keyframes tick{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+/* MODAL */
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:300;align-items:flex-end;justify-content:center;}
+.overlay.open{display:flex;}
+.modal{background:var(--s1);border-radius:16px 16px 0 0;border:1px solid var(--border);border-bottom:none;width:100%;max-width:560px;max-height:92vh;overflow-y:auto;padding:20px;animation:slideUp .3s ease;}
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.modal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;}
+.modal-close{background:var(--s3);border:1px solid var(--border);border-radius:6px;padding:3px 10px;cursor:pointer;color:var(--text2);font-size:18px;}
+
+/* FORM */
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.form-section{background:var(--s2);border-radius:8px;padding:14px;margin-bottom:12px;}
+.fsec-title{font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:700;color:var(--gold);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;border-bottom:1px solid var(--border);padding-bottom:6px;}
+.btn-row{display:flex;flex-direction:column;gap:8px;margin-top:14px;}
+
+/* STATS */
+.stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;}
+.stat-box{background:var(--s1);border:1px solid var(--border);border-radius:8px;padding:12px;}
+.stat-label{font-size:10px;color:var(--text2);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px;}
+.stat-val{font-family:'Rajdhani',sans-serif;font-size:26px;font-weight:700;}
+
+/* SECTION HEADER */
+.sec-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+.sec-title{font-family:'Rajdhani',sans-serif;font-size:14px;color:var(--text2);text-transform:uppercase;letter-spacing:1px;}
+
+/* TOAST */
+.toast{position:fixed;top:70px;left:50%;transform:translateX(-50%);background:var(--green);color:#000;padding:8px 20px;border-radius:20px;font-family:'Rajdhani',sans-serif;font-size:14px;font-weight:700;z-index:999;opacity:0;transition:opacity .3s;pointer-events:none;letter-spacing:1px;white-space:nowrap;}
+.toast.show{opacity:1;}
+
+/* LOG */
+.log-item{display:flex;gap:10px;padding:7px 0;border-bottom:1px solid var(--border);font-size:12px;}
+.log-time{color:var(--text3);flex-shrink:0;min-width:65px;}
+.log-msg{color:var(--text2);}
+
+/* KV GRID */
+.kv-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;}
+.kv{background:var(--s2);border-radius:6px;padding:8px 10px;}
+.kv-l{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;}
+.kv-v{font-family:'Rajdhani',sans-serif;font-size:14px;font-weight:700;margin-top:2px;}
+
+/* STAFF LIST */
+.staff-row{display:flex;align-items:center;gap:10px;background:var(--s2);border-radius:7px;padding:9px 12px;margin-bottom:7px;}
+.s-av{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:700;flex-shrink:0;}
+.s-info{flex:1;}
+.s-name{font-family:'Rajdhani',sans-serif;font-size:14px;font-weight:700;}
+.s-det{font-size:10px;color:var(--text3);}
+.s-del{background:rgba(255,23,68,.12);border:1px solid rgba(255,23,68,.25);color:var(--red);border-radius:5px;padding:3px 9px;cursor:pointer;font-size:10px;font-family:'Rajdhani',sans-serif;font-weight:700;}
+
+/* BRANCH TABS */
+.btabs{display:flex;background:var(--s2);border-radius:7px;padding:3px;margin-bottom:12px;gap:2px;}
+.btab{flex:1;padding:7px 6px;text-align:center;border-radius:5px;cursor:pointer;font-family:'Rajdhani',sans-serif;font-size:11px;font-weight:700;letter-spacing:0.5px;color:var(--text3);border:none;background:none;transition:all .2s;white-space:nowrap;}
+.btab.active{background:var(--gold);color:#000;}
+
+/* DIVIDER */
+hr{border:none;border-top:1px solid var(--border);margin:12px 0;}
+
+/* LOADER */
+.loader{display:flex;align-items:center;justify-content:center;min-height:100vh;flex-direction:column;gap:14px;}
+.spinner{width:40px;height:40px;border:3px solid var(--border);border-top-color:var(--gold);border-radius:50%;animation:spin .8s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loader-text{font-family:'Rajdhani',sans-serif;color:var(--text2);letter-spacing:2px;font-size:14px;}
+
+.role-tag{display:inline-block;padding:1px 7px;border-radius:10px;font-size:9px;font-family:'Rajdhani',sans-serif;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;}
+.role-advisor{background:rgba(240,165,0,.12);color:var(--gold);border:1px solid rgba(240,165,0,.2);}
+.role-mechanic{background:rgba(0,212,255,.12);color:var(--cyan);border:1px solid rgba(0,212,255,.2);}
+.role-tyres{background:rgba(0,230,118,.12);color:var(--green);border:1px solid rgba(0,230,118,.2);}
+.role-admin{background:rgba(213,0,249,.12);color:var(--purple);border:1px solid rgba(213,0,249,.2);}
+.role-manager{background:rgba(213,0,249,.12);color:var(--purple);border:1px solid rgba(213,0,249,.2);}
+.role-reception{background:rgba(41,121,255,.12);color:var(--blue);border:1px solid rgba(41,121,255,.2);}
+.role-supervisor{background:rgba(255,109,0,.12);color:var(--orange);border:1px solid rgba(255,109,0,.2);}
+.role-bodywork{background:rgba(255,23,68,.12);color:var(--red);border:1px solid rgba(255,23,68,.2);}
+.role-cleaner{background:rgba(100,100,100,.12);color:var(--text2);border:1px solid rgba(100,100,100,.2);}
+/* INVENTORY */
+.inv-filter-btn{background:var(--s2);border:1px solid var(--border);border-radius:20px;padding:4px 12px;color:var(--text2);font-family:'Rajdhani',sans-serif;font-size:11px;font-weight:700;cursor:pointer;letter-spacing:0.5px;}
+.inv-filter-btn.active{background:var(--gold);color:#000;border-color:var(--gold);}
+.part-card{background:var(--s1);border:1px solid var(--border);border-radius:10px;padding:12px 14px;margin-bottom:8px;cursor:pointer;transition:all 0.15s;}
+.part-card:hover{background:var(--s2);}
+.part-card.low{border-left:3px solid var(--red);}
+.part-card.ok{border-left:3px solid var(--green);}
+.part-card.order{border-left:3px solid var(--orange);}
+.part-name{font-family:'Rajdhani',sans-serif;font-size:16px;font-weight:700;}
+.part-num{font-size:11px;color:var(--text3);margin-top:1px;}
+.part-car{font-size:12px;color:var(--text2);margin-top:3px;}
+.stock-pills{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px;}
+.stock-pill{display:flex;flex-direction:column;align-items:center;background:var(--s2);border-radius:6px;padding:4px 10px;min-width:70px;}
+.stock-pill-label{font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;}
+.stock-pill-val{font-family:'Rajdhani',sans-serif;font-size:16px;font-weight:700;margin-top:1px;}
+.notify-bar{background:var(--s2);border:1px solid var(--border);border-radius:8px;padding:10px 12px;margin-top:8px;display:flex;align-items:center;justify-content:space-between;gap:8px;}
+.notify-bar-msg{font-size:12px;color:var(--text2);}
+
+</style>
+</head>
+<body>
+
+<!-- LOADER -->
+<div class="loader" id="loader">
+  <div class="spinner"></div>
+  <div class="loader-text">LOADING TOUFAN SYSTEM...</div>
+</div>
+
+<!-- LOGIN -->
+<div class="login-screen" id="login-screen" style="display:none;">
+  <div class="login-logo">🔥 TOUFAN</div>
+  <div class="login-sub">Workshop Management System</div>
+  <div class="login-card">
+    <div class="login-title">Sign In</div>
+    <div class="form-group">
+      <label class="form-label">Email</label>
+      <input type="email" class="form-control" id="login-email" placeholder="your@email.com" autocomplete="email">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Password</label>
+      <input type="password" class="form-control" id="login-pass" placeholder="••••••••" autocomplete="current-password">
+    </div>
+    <button class="btn btn-gold" onclick="doLogin()" style="margin-top:6px;">Sign In</button>
+    <div class="login-err" id="login-err"></div>
+  </div>
+  <div style="margin-top:20px;font-size:11px;color:var(--text3);text-align:center;">Toufan Auto Care · Auto Services Center · Al Shmal Tyres</div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- APP SHELL -->
+<div class="app-shell" id="app-shell">
+  <div class="topbar">
+    <div class="topbar-left">
+      <div>
+        <div class="topbar-logo">🔥 TOUFAN</div>
+        <div class="topbar-branch" id="topbar-branch">Loading...</div>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <div class="user-pill">
+        <div class="user-dot"></div>
+        <span id="topbar-user">...</span>
+        <span class="role-tag role-advisor" id="topbar-role-tag" style="margin-left:2px;"></span>
+      </div>
+      <button class="logout-btn" onclick="doLogout()" title="Sign out">⏏</button>
+    </div>
+  </div>
+
+  <!-- PAGES -->
+  <div class="page active" id="page-home">
+    <!-- Dynamic based on role -->
+    <div id="home-content"></div>
+  </div>
+
+  <div class="page" id="page-jobs">
+    <div class="sec-head">
+      <div class="sec-title" id="jobs-page-title">My Jobs</div>
+      <button class="btn btn-gold btn-sm" id="new-job-btn" onclick="openNewJobModal()" style="display:none;">+ New Job</button>
+    </div>
+    <div id="jobs-filter" style="margin-bottom:10px;display:flex;gap:6px;flex-wrap:wrap;"></div>
+    <div id="jobs-list"></div>
+  </div>
+
+  <div class="page" id="page-reception">
+    <div class="ticker">
+      <div class="ticker-inner">
+        <span class="tick-item">✅ Vehicle Ready → Please proceed to billing counter</span>
+        <span class="tick-item">🔥 Toufan Auto Care · Toufan Auto Services Center · Toufan Al Shmal Tyres Changing LLC</span>
+        <span class="tick-item">📋 TRN: 100237588900003 · Deira, Dubai, UAE</span>
+        <span class="tick-item">✅ Vehicle Ready → Please proceed to billing counter</span>
+        <span class="tick-item">🔥 Toufan Auto Care · Toufan Auto Services Center · Toufan Al Shmal Tyres Changing LLC</span>
+        <span class="tick-item">📋 TRN: 100237588900003 · Deira, Dubai, UAE</span>
+      </div>
+    </div>
+    <div style="padding:10px;">
+      <div class="sec-head">
+        <div class="sec-title">Job Progress Board</div>
+        <select class="form-control" style="width:auto;padding:5px 10px;font-size:12px;" onchange="filterReception(this.value)" id="reception-filter">
+          <option value="all">All Branches</option>
+          <option value="TAC">Auto Care</option>
+          <option value="TASC">Auto Services</option>
+          <option value="TAS">Al Shmal Tyres</option>
+        </select>
+      </div>
+      <div class="prog-scroll">
+        <div class="prog-table" id="prog-table"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="page" id="page-dispatch">
+    <div class="sec-head">
+      <div class="sec-title">Workshop Dispatch</div>
+      <select class="form-control" style="width:auto;padding:5px 10px;font-size:12px;" onchange="filterDispatch(this.value)" id="dispatch-filter">
+        <option value="all">All Branches</option>
+        <option value="TAC">Auto Care</option>
+        <option value="TASC">Auto Services</option>
+        <option value="TAS">Al Shmal Tyres</option>
+      </select>
+    </div>
+    <div class="dispatch-scroll">
+      <div class="dispatch-cols" id="dispatch-cols"></div>
+    </div>
+  </div>
+
+
+  <div class="page" id="page-inventory">
+    <div class="sec-head">
+      <div class="sec-title">Parts & Inventory</div>
+      <button class="btn btn-gold btn-sm" onclick="openAddPartModal()" id="add-part-btn" style="display:none;">+ Add Part</button>
+    </div>
+    <div style="margin-bottom:10px;">
+      <input type="text" class="form-control" id="inv-search" placeholder="Search part name, number, car make..." oninput="filterInventory(this.value)" style="font-size:13px;">
+    </div>
+    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;" id="inv-branch-filter"></div>
+    <div class="stats-grid" style="margin-bottom:12px;">
+      <div class="stat-box"><div class="stat-label">Total Parts</div><div class="stat-val" style="color:var(--cyan)" id="inv-stat-total">0</div></div>
+      <div class="stat-box"><div class="stat-label">Low / Out</div><div class="stat-val" style="color:var(--red)" id="inv-stat-low">0</div></div>
+      <div class="stat-box"><div class="stat-label">Need Order</div><div class="stat-val" style="color:var(--orange)" id="inv-stat-order">0</div></div>
+      <div class="stat-box"><div class="stat-label">Fast Moving</div><div class="stat-val" style="color:var(--green)" id="inv-stat-fast">0</div></div>
+    </div>
+    <div id="inventory-list"></div>
+  </div>
+
+  <div class="page" id="page-settings">
+    <div id="settings-content"></div>
+  </div>
+
+  <!-- BOTTOM NAV -->
+  <nav class="bottom-nav" id="bottom-nav"></nav>
+</div>
+
+<!-- MODALS -->
+<div class="overlay" id="overlay-job">
+  <div class="modal">
+    <div class="modal-head">
+      <h3 style="color:var(--gold)" id="job-modal-title">New Job Card</h3>
+      <button class="modal-close" onclick="closeOverlay('overlay-job')">✕</button>
+    </div>
+    <div id="job-modal-body"></div>
+  </div>
+</div>
+
+<div class="overlay" id="overlay-detail">
+  <div class="modal">
+    <div class="modal-head">
+      <h3 style="color:var(--cyan)" id="detail-title">Job Detail</h3>
+      <button class="modal-close" onclick="closeOverlay('overlay-detail')">✕</button>
+    </div>
+    <div id="detail-body"></div>
+  </div>
+</div>
+
+<div class="overlay" id="overlay-update">
+  <div class="modal">
+    <div class="modal-head">
+      <h3 style="color:var(--gold)">Update Status</h3>
+      <button class="modal-close" onclick="closeOverlay('overlay-update')">✕</button>
+    </div>
+    <div id="update-body"></div>
+  </div>
+</div>
+
+<div class="overlay" id="overlay-add-staff">
+  <div class="modal">
+    <div class="modal-head">
+      <h3 style="color:var(--gold)">Add Staff Member</h3>
+      <button class="modal-close" onclick="closeOverlay('overlay-add-staff')">✕</button>
+    </div>
+    <div id="add-staff-body">
+      <div class="form-group"><label class="form-label">Full Name</label><input type="text" class="form-control" id="ns-name" placeholder="Full name"></div>
+      <div class="form-group"><label class="form-label">Email (used for login)</label><input type="email" class="form-control" id="ns-email" placeholder="staff@toufan.com"></div>
+      <div class="form-group"><label class="form-label">Password</label><input type="password" class="form-control" id="ns-pass" placeholder="Min 6 characters"></div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Role</label>
+          <select class="form-control" id="ns-role">
+            <option value="manager">Manager</option>
+            <option value="advisor">Service Advisor</option>
+            <option value="mechanic">Mechanic</option>
+            <option value="tyres">Tyre Technician</option>
+            <option value="bodywork">Spray Painter</option>
+            <option value="supervisor">Supervisor / QA</option>
+            <option value="reception">Reception / Admin</option>
+            <option value="cleaner">Cleaner / Support</option>
+          </select>
+        </div>
+        <div class="form-group"><label class="form-label">Branch</label>
+          <select class="form-control" id="ns-branch">
+            <option value="TAC">Auto Care</option>
+            <option value="TASC">Auto Services</option>
+            <option value="TAS">Al Shmal Tyres</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group"><label class="form-label">WhatsApp Number</label><input type="tel" class="form-control" id="ns-phone" placeholder="+971 50 XXX XXXX"></div>
+      <button class="btn btn-gold" onclick="createStaffUser()" style="margin-top:6px;">Create Account</button>
+      <div class="login-err" id="staff-err"></div>
+    </div>
+  </div>
+</div>
+
+<!-- FIREBASE -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+
+<script>
+// ============ FIREBASE CONFIG ============
+const firebaseConfig = {
+  apiKey: "AIzaSyBdeMGPYUEErc_aDwrp8r734Hsxn8e0_cw",
+  authDomain: "toufan-garage.firebaseapp.com",
+  databaseURL: "https://toufan-garage-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "toufan-garage",
+  storageBucket: "toufan-garage.firebasestorage.app",
+  messagingSenderId: "708520067605",
+  appId: "1:708520067605:web:4e5d6e14cb3be9cba4041c"
+};
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db = firebase.database();
+
+// ============ CONSTANTS ============
+const BRANCHES = {TAC:'Toufan Auto Care',TASC:'Toufan Auto Services Center',TAS:'Toufan Al Shmal Tyres Changing LLC'};
+const STATUS_CFG = {
+  diagnostic:{label:'Diagnostic',icon:'⚙️',color:'var(--red)'},
+  service:   {label:'Service',   icon:'🔧',color:'var(--orange)'},
+  quality:   {label:'Quality Check',icon:'🔍',color:'var(--gold)'},
+  testdrive: {label:'Test Drive',icon:'🚗',color:'var(--cyan)'},
+  ready:     {label:'Ready',     icon:'✅',color:'var(--green)'},
+  hold:      {label:'On Hold',   icon:'⏸️',color:'var(--purple)'},
+  waiting:   {label:'Waiting Parts',icon:'📦',color:'var(--blue)'},
+  paid:      {label:'Paid',      icon:'💰',color:'var(--green)'},
+};
+const ROLE_COLORS = {admin:'#d500f9',manager:'#d500f9',advisor:'#f0a500',mechanic:'#00d4ff',tyres:'#00e676',bodywork:'#ff1744',supervisor:'#ff6d00',reception:'#2979ff',cleaner:'#888'};
+const STAFF_COLORS = ['#f0a500','#00d4ff','#00e676','#d500f9','#ff6d00','#2979ff','#ff1744','#00bcd4','#76ff03'];
+
+// ============ STATE ============
+let currentUser = null;
+let currentProfile = null;
+let allJobs = {};
+let allStaff = {};
+let currentJobFilter = 'all';
+let currentStaffBranch = 'TAC';
+let receptionFilter = 'all';
+let dispatchFilter = 'all';
+let jobListeners = [];
+
+// ============ AUTH ============
+auth.onAuthStateChanged(async user => {
+  document.getElementById('loader').style.display = 'none';
+  if (user) {
+    currentUser = user;
+    await loadProfile(user.uid);
+    showApp();
+  } else {
+    currentUser = null;
+    currentProfile = null;
+    showLogin();
+  }
+});
+
+async function loadProfile(uid) {
+  const snap = await db.ref('staff/' + uid).once('value');
+  if (snap.exists()) {
+    currentProfile = snap.val();
+    currentProfile.uid = uid;
+  } else {
+    // Check if admin
+    currentProfile = {name:'Admin',role:'admin',branch:'all',phone:''};
+  }
+}
+
+function doLogin() {
+  const email = document.getElementById('login-email').value.trim();
+  const pass = document.getElementById('login-pass').value;
+  document.getElementById('login-err').textContent = '';
+  if (!email || !pass) { document.getElementById('login-err').textContent = 'Enter email and password'; return; }
+  auth.signInWithEmailAndPassword(email, pass).catch(e => {
+    document.getElementById('login-err').textContent = 'Invalid email or password';
+  });
+}
+
+document.getElementById('login-pass').addEventListener('keydown', e => { if(e.key==='Enter') doLogin(); });
+
+function doLogout() {
+  auth.signOut();
+}
+
+function showLogin() {
+  document.getElementById('app-shell').classList.remove('visible');
+  document.getElementById('login-screen').style.display = 'flex';
+}
+
+function showApp() {
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('app-shell').classList.add('visible');
+  setupNav();
+  setupTopbar();
+  listenToJobs();
+  listenToStaff();
+  listenToInventory();
+}
+
+// ============ NAV SETUP ============
+function setupNav() {
+  const role = currentProfile?.role;
+  let navItems = [];
+  if (role === 'admin' || role === 'supervisor' || role === 'manager') {
+    navItems = [
+      {id:'home',icon:'🏠',label:'Home'},
+      {id:'jobs',icon:'📋',label:'Jobs'},
+      {id:'reception',icon:'📺',label:'Board'},
+      {id:'dispatch',icon:'🔧',label:'Dispatch'},
+      {id:'inventory',icon:'📦',label:'Parts'},
+      {id:'settings',icon:'⚙️',label:'Settings'},
+    ];
+  } else if (role === 'advisor') {
+    navItems = [
+      {id:'home',icon:'🏠',label:'Home'},
+      {id:'jobs',icon:'📋',label:'Jobs'},
+      {id:'reception',icon:'📺',label:'Board'},
+      {id:'dispatch',icon:'🔧',label:'Dispatch'},
+      {id:'inventory',icon:'📦',label:'Parts'},
+    ];
+  } else if (role === 'mechanic' || role === 'tyres') {
+    navItems = [
+      {id:'home',icon:'🏠',label:'My Jobs'},
+      {id:'reception',icon:'📺',label:'Board'},
+      {id:'inventory',icon:'📦',label:'Parts'},
+    ];
+  } else if (role === 'reception') {
+    navItems = [
+      {id:'reception',icon:'📺',label:'Board'},
+      {id:'jobs',icon:'📋',label:'Jobs'},
+      {id:'inventory',icon:'📦',label:'Parts'},
+    ];
+  } else {
+    navItems = [
+      {id:'home',icon:'🏠',label:'Home'},
+      {id:'jobs',icon:'📋',label:'Jobs'},
+      {id:'reception',icon:'📺',label:'Board'},
+      {id:'dispatch',icon:'🔧',label:'Dispatch'},
+      {id:'inventory',icon:'📦',label:'Parts'},
+      {id:'settings',icon:'⚙️',label:'Settings'},
+    ];
+  }
+  const nav = document.getElementById('bottom-nav');
+  nav.innerHTML = navItems.map(n => `<button class="nav-btn ${n.id==='home'?'active':''}" onclick="showPage('${n.id}',this)" data-page="${n.id}"><span class="ni">${n.icon}</span><span>${n.label}</span></button>`).join('');
+
+  // Show new job btn for advisors/admin
+  const njb = document.getElementById('new-job-btn');
+  if (['admin','advisor','supervisor','manager'].includes(role)) njb.style.display = '';
+  else njb.style.display = 'none';
+}
+
+function setupTopbar() {
+  const p = currentProfile;
+  document.getElementById('topbar-user').textContent = p?.name?.split(' ')[0] || 'User';
+  const rt = document.getElementById('topbar-role-tag');
+  rt.textContent = p?.role || '';
+  rt.className = 'role-tag role-' + (p?.role || 'advisor');
+  document.getElementById('topbar-branch').textContent = BRANCHES[p?.branch] || 'All Branches';
+}
+
+// ============ PAGE SWITCHING ============
+function showPage(id, el) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  if (el) el.classList.add('active');
+  else document.querySelectorAll(`.nav-btn[data-page="${id}"]`).forEach(b => b.classList.add('active'));
+  if (id === 'home') renderHome();
+  else if (id === 'jobs') renderJobsPage();
+  else if (id === 'reception') renderReception();
+  else if (id === 'dispatch') renderDispatch();
+  else if (id === 'settings') renderSettings();
+  else if (id === 'inventory') renderInventory();
+}
+
+// ============ REALTIME LISTENERS ============
+function listenToJobs() {
+  db.ref('jobs').on('value', snap => {
+    allJobs = snap.val() || {};
+    refreshCurrentPage();
+  });
+}
+
+function listenToStaff() {
+  db.ref('staff').on('value', snap => {
+    allStaff = snap.val() || {};
+    refreshCurrentPage();
+  });
+}
+
+function refreshCurrentPage() {
+  const active = document.querySelector('.page.active');
+  if (!active) return;
+  const id = active.id.replace('page-','');
+  if (id === 'home') renderHome();
+  else if (id === 'jobs') renderJobsPage();
+  else if (id === 'reception') renderReception();
+  else if (id === 'dispatch') renderDispatch();
+  else if (id === 'inventory') renderInventory();
+}
+
+// ============ FILTER JOBS ============
+function getMyJobs() {
+  const jobs = Object.values(allJobs);
+  const role = currentProfile?.role;
+  const uid = currentUser?.uid;
+  if (role === 'admin' || role === 'supervisor' || role === 'manager') return jobs;
+  if (role === 'advisor') return jobs.filter(j => j.advisorUid === uid || j.branch === currentProfile.branch);
+  if (role === 'mechanic' || role === 'tyres') return jobs.filter(j => j.mechanicUid === uid);
+  if (role === 'reception') return jobs.filter(j => j.branch === currentProfile.branch);
+  return jobs;
+}
+
+// ============ HOME PAGE ============
+function renderHome() {
+  const jobs = getMyJobs();
+  const role = currentProfile?.role;
+  const open = jobs.filter(j => !['paid'].includes(j.status));
+  const ready = jobs.filter(j => j.status === 'ready');
+  const myAssigned = jobs.filter(j => j.mechanicUid === currentUser?.uid && j.status !== 'paid');
+
+  let html = `<div class="stats-grid">
+    <div class="stat-box"><div class="stat-label">Open Jobs</div><div class="stat-val" style="color:var(--gold)">${open.length}</div></div>
+    <div class="stat-box"><div class="stat-label">Ready</div><div class="stat-val" style="color:var(--green)">${ready.length}</div></div>`;
+  if (['admin','supervisor','manager'].includes(role)) {
+    const todayPaid = jobs.filter(j => j.status === 'paid' && j.paidDate === todayStr());
+    const revenue = todayPaid.reduce((s,j) => s+(j.amount||0),0);
+    html += `<div class="stat-box"><div class="stat-label">Today Revenue</div><div class="stat-val" style="color:var(--cyan);font-size:18px;">AED ${revenue.toLocaleString()}</div></div>
+    <div class="stat-box"><div class="stat-label">Total Staff</div><div class="stat-val" style="color:var(--purple)">${Object.keys(allStaff).length}</div></div>`;
+  }
+  html += `</div>`;
+
+  if (role === 'mechanic' || role === 'tyres') {
+    html += `<div class="sec-head"><div class="sec-title">My Assigned Jobs</div></div>`;
+    html += myAssigned.length ? myAssigned.map(j => jobCardHTML(j, true)).join('') : `<div style="text-align:center;padding:30px;color:var(--text3)">No jobs assigned to you right now</div>`;
+  } else {
+    // Recent jobs
+    html += `<div class="sec-head"><div class="sec-title">Recent Jobs</div></div>`;
+    const recent = jobs.slice().sort((a,b) => (b.createdAt||0)-(a.createdAt||0)).slice(0,5);
+    html += recent.length ? recent.map(j => jobCardHTML(j)).join('') : `<div style="text-align:center;padding:30px;color:var(--text3)">No jobs yet</div>`;
+  }
+  document.getElementById('home-content').innerHTML = html;
+}
+
+// ============ JOBS PAGE ============
+function renderJobsPage() {
+  const jobs = getMyJobs();
+  const role = currentProfile?.role;
+  document.getElementById('jobs-page-title').textContent = ['admin','supervisor','manager'].includes(role) ? 'All Jobs' : 'Branch Jobs';
+
+  // Filter chips
+  const counts = {all:jobs.length};
+  Object.keys(STATUS_CFG).forEach(s => counts[s] = jobs.filter(j=>j.status===s).length);
+  const filterDiv = document.getElementById('jobs-filter');
+  filterDiv.innerHTML = ['all','diagnostic','service','quality','testdrive','ready','hold','waiting','paid'].map(s => {
+    const sc = STATUS_CFG[s];
+    const active = currentJobFilter === s ? 'style="background:var(--gold);color:#000;"' : '';
+    return `<button ${active} onclick="setJobFilter('${s}')" style="background:var(--s2);border:1px solid var(--border);border-radius:20px;padding:4px 12px;color:var(--text2);font-family:'Rajdhani',sans-serif;font-size:11px;font-weight:700;cursor:pointer;letter-spacing:0.5px;">${sc?sc.icon+' ':''} ${s.toUpperCase()} (${counts[s]||0})</button>`;
+  }).join('');
+
+  const filtered = currentJobFilter === 'all' ? jobs : jobs.filter(j=>j.status===currentJobFilter);
+  const sorted = filtered.slice().sort((a,b) => (b.createdAt||0)-(a.createdAt||0));
+  document.getElementById('jobs-list').innerHTML = sorted.length ? sorted.map(j => jobCardHTML(j)).join('') : `<div style="text-align:center;padding:30px;color:var(--text3)">No jobs</div>`;
+}
+
+function setJobFilter(f) { currentJobFilter = f; renderJobsPage(); }
+
+function jobCardHTML(job, mini) {
+  const sc = STATUS_CFG[job.status] || {label:job.status,icon:'',color:'var(--text2)'};
+  const mechName = job.mechanic || 'Unassigned';
+  const prio = job.priority === 'urgent' ? '<span class="badge b-urgent">🔴 URGENT</span>' : job.priority === 'express' ? '<span class="badge b-express">⚡ EXPRESS</span>' : '';
+  return `<div class="card" onclick="openJobDetail('${job.id}')">
+    <div class="card-row">
+      <div>
+        <div class="card-title" style="color:var(--cyan)">${job.plate}</div>
+        <div class="card-sub">${job.vehicle} ${job.year||''} · ${job.customer||''}</div>
+        ${!mini ? `<div style="font-size:11px;color:var(--text3);margin-top:4px;">👤 ${job.advisor||'-'} · 🔧 ${mechName} · ${BRANCHES[job.branch]?.split(' ').slice(1,3).join(' ')||job.branch}</div>` : ''}
+      </div>
+      <div style="text-align:right;flex-shrink:0;display:flex;flex-direction:column;align-items:flex-end;gap:4px;">
+        <span class="badge b-${job.status}">${sc.icon} ${sc.label}</span>
+        ${prio}
+        ${job.amount ? `<div style="font-family:'Rajdhani',sans-serif;font-size:14px;font-weight:700;color:var(--gold)">AED ${job.amount.toLocaleString()}</div>` : ''}
+      </div>
+    </div>
+  </div>`;
+}
+
+// ============ JOB DETAIL ============
+function openJobDetail(id) {
+  const job = Object.values(allJobs).find(j=>j.id===id) || allJobs[id];
+  if (!job) return;
+  const sc = STATUS_CFG[job.status]||{label:job.status,icon:'',color:'var(--text2)'};
+  const role = currentProfile?.role;
+  const canUpdate = ['admin','advisor','supervisor','manager'].includes(role) || job.mechanicUid === currentUser?.uid;
+
+  document.getElementById('detail-title').textContent = job.id + ' · ' + job.plate;
+  document.getElementById('detail-body').innerHTML = `
+    <div class="kv-grid">
+      <div class="kv"><div class="kv-l">Vehicle</div><div class="kv-v">${job.vehicle} ${job.year||''}</div></div>
+      <div class="kv"><div class="kv-l">Plate</div><div class="kv-v" style="color:var(--cyan)">${job.plate}</div></div>
+      <div class="kv"><div class="kv-l">Customer</div><div class="kv-v">${job.customer||'-'}</div></div>
+      <div class="kv"><div class="kv-l">Phone</div><div class="kv-v" style="color:var(--gold)">${job.phone||'-'}</div></div>
+      <div class="kv"><div class="kv-l">Advisor</div><div class="kv-v">${job.advisor||'-'}</div></div>
+      <div class="kv"><div class="kv-l">Mechanic</div><div class="kv-v">${job.mechanic||'Unassigned'}</div></div>
+      <div class="kv"><div class="kv-l">Branch</div><div class="kv-v" style="font-size:11px">${BRANCHES[job.branch]||job.branch}</div></div>
+      <div class="kv"><div class="kv-l">Status</div><div class="kv-v" style="color:${sc.color}">${sc.icon} ${sc.label}</div></div>
+    </div>
+    <div style="background:var(--s2);border-radius:8px;padding:10px;margin-bottom:10px;">
+      <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;">Services</div>
+      ${(job.services||[]).map(s=>`<div style="font-size:13px;padding:3px 0;border-bottom:1px solid var(--border);">• ${s}</div>`).join('')}
+    </div>
+    ${job.notes ? `<div style="background:var(--s2);border-radius:8px;padding:10px;margin-bottom:10px;font-size:13px;color:var(--text2);">${job.notes}</div>` : ''}
+    ${job.amount ? `<div style="font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700;color:var(--gold);margin-bottom:10px;">AED ${job.amount.toLocaleString()} ${job.paid?'<span style="color:var(--green);font-size:13px;">✅ PAID</span>':''}</div>` : ''}
+    <div style="max-height:160px;overflow-y:auto;margin-bottom:12px;">
+      <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;">Activity Log</div>
+      ${(job.log||[]).slice().reverse().map(l=>`<div class="log-item"><div class="log-time">${l.time}</div><div class="log-msg">${l.msg}</div></div>`).join('')}
+    </div>
+    <div style="display:flex;flex-direction:column;gap:8px;">
+      ${canUpdate ? `<button class="btn btn-gold" onclick="closeOverlay('overlay-detail');openUpdateModal('${job.id}')">📊 Update Status</button>` : ''}
+      ${job.phone ? `<button class="btn btn-wa" onclick="sendWA('${job.id}')">📲 Send WhatsApp Update</button>` : ''}
+      ${!job.paid && job.amount && ['admin','advisor','supervisor','manager'].includes(role) ? `<button class="btn btn-green" onclick="markPaid('${job.id}')">💰 Mark as Paid</button>` : ''}
+    </div>`;
+  openOverlay('overlay-detail');
+}
+
+// ============ UPDATE STATUS ============
+function openUpdateModal(id) {
+  const job = Object.values(allJobs).find(j=>j.id===id) || allJobs[id];
+  if (!job) return;
+  const branchStaff = Object.values(allStaff).filter(s => s.branch === job.branch && ['mechanic','tyres','supervisor'].includes(s.role));
+  const role = currentProfile?.role;
+
+  document.getElementById('update-body').innerHTML = `
+    <div style="font-family:'Rajdhani',sans-serif;font-size:18px;font-weight:700;color:var(--cyan);margin-bottom:14px;">${job.plate} · ${job.vehicle}</div>
+    <div class="form-row" style="margin-bottom:10px;">
+      <div class="form-group"><label class="form-label">Status</label>
+        <select class="form-control" id="upd-status">
+          ${Object.entries(STATUS_CFG).map(([k,v])=>`<option value="${k}" ${job.status===k?'selected':''}>${v.icon} ${v.label}</option>`).join('')}
+        </select>
+      </div>
+      ${['admin','advisor','supervisor','manager'].includes(role) ? `<div class="form-group"><label class="form-label">Reassign Mechanic</label>
+        <select class="form-control" id="upd-mechanic">
+          <option value="">-- Keep Current --</option>
+          ${branchStaff.map(s=>`<option value="${s.uid||''}" data-name="${s.name}" ${job.mechanicUid===s.uid?'selected':''}>${s.name}</option>`).join('')}
+        </select>
+      </div>` : '<div></div>'}
+    </div>
+    ${['admin','advisor','supervisor','manager'].includes(role) ? `<div class="form-row" style="margin-bottom:10px;">
+      <div class="form-group"><label class="form-label">Invoice No.</label><input type="text" class="form-control" id="upd-invoice" value="${job.invoice||''}"></div>
+      <div class="form-group"><label class="form-label">Amount (AED)</label><input type="number" class="form-control" id="upd-amount" value="${job.amount||0}"></div>
+    </div>` : ''}
+    <div class="form-group" style="margin-bottom:14px;"><label class="form-label">Note / Update</label><input type="text" class="form-control" id="upd-note" placeholder="Add a note..."></div>
+    <div style="display:flex;flex-direction:column;gap:8px;">
+      <button class="btn btn-gold" onclick="applyUpdate('${id}',false)">💾 Save Update</button>
+      <button class="btn btn-wa" onclick="applyUpdate('${id}',true)">📲 Save + Notify Customer on WhatsApp</button>
+      ${['admin','advisor','supervisor','manager'].includes(role) ? `<button class="btn btn-green" onclick="applyUpdate('${id}',true,true)">💰 Mark Paid + Notify All</button>` : ''}
+    </div>`;
+  openOverlay('overlay-update');
+}
+
+async function applyUpdate(id, notify, markPaidFlag) {
+  const job = Object.values(allJobs).find(j=>j.id===id) || allJobs[id];
+  if (!job) return;
+  const newStatus = document.getElementById('upd-status')?.value || job.status;
+  const mechEl = document.getElementById('upd-mechanic');
+  const note = document.getElementById('upd-note')?.value || '';
+  const invoiceEl = document.getElementById('upd-invoice');
+  const amountEl = document.getElementById('upd-amount');
+
+  const updates = { status: markPaidFlag ? 'paid' : newStatus };
+  if (markPaidFlag) { updates.paid = true; updates.paidDate = todayStr(); }
+  if (invoiceEl) updates.invoice = invoiceEl.value;
+  if (amountEl) updates.amount = parseFloat(amountEl.value)||0;
+
+  // Mechanic reassignment
+  let newMechUid = null, newMechName = null;
+  if (mechEl && mechEl.value) {
+    newMechUid = mechEl.value;
+    const opt = mechEl.options[mechEl.selectedIndex];
+    newMechName = opt.dataset.name || opt.text;
+    updates.mechanicUid = newMechUid;
+    updates.mechanic = newMechName;
+  }
+
+  const log = job.log || [];
+  if (note) log.push({time:nowTime(), msg: note});
+  log.push({time:nowTime(), msg:`Status → ${STATUS_CFG[updates.status]?.label||updates.status}`});
+  if (markPaidFlag) log.push({time:nowTime(), msg:`💰 Payment received AED ${updates.amount||job.amount||0}`});
+  if (newMechName && newMechName !== job.mechanic) log.push({time:nowTime(), msg:`🔧 Assigned to ${newMechName}`});
+  updates.log = log;
+
+  await db.ref('jobs/' + id).update(updates);
+  closeOverlay('overlay-update');
+  showToast('Job updated!');
+
+  // Notify mechanic on assignment
+  if (newMechUid && newMechName && newMechName !== job.mechanic) {
+    const mechProfile = Object.values(allStaff).find(s=>s.uid===newMechUid);
+    if (mechProfile?.phone) {
+      const mMsg = `🔧 Dear ${newMechName}, you have been assigned a new job!\n\nJob: *${job.id}*\n🚗 Vehicle: *${job.vehicle}* (${job.plate})\n⚙️ Services: ${(job.services||[]).join(', ')}\n📍 Branch: ${BRANCHES[job.branch]}\n\nPlease check the workshop board. 🔥 *Toufan*`;
+      setTimeout(() => window.open(`https://wa.me/${mechProfile.phone.replace(/\D/g,'')}?text=${encodeURIComponent(mMsg)}`,'_blank'), 500);
+    }
+  }
+
+  if (notify && job.phone) {
+    const phone = job.phone.replace(/\D/g,'');
+    let msg = '';
+    if (markPaidFlag) {
+      msg = `🎉 Dear ${job.customer}, payment of *AED ${updates.amount||job.amount}* for your *${job.vehicle}* (${job.plate}) has been received.\n\nReceipt: *${updates.invoice||job.invoice}*\n\nThank you for choosing 🔥 *Toufan Garage*!`;
+      // Also notify advisor
+      const adv = Object.values(allStaff).find(s=>s.uid===job.advisorUid);
+      if (adv?.phone) {
+        const aMsg = `💰 Payment received!\nVehicle: *${job.vehicle}* (${job.plate})\nCustomer: ${job.customer}\nAmount: *AED ${updates.amount||job.amount}*\nInvoice: ${updates.invoice||job.invoice}\n🔥 Toufan System`;
+        setTimeout(() => window.open(`https://wa.me/${adv.phone.replace(/\D/g,'')}?text=${encodeURIComponent(aMsg)}`,'_blank'), 1200);
+      }
+    } else if (updates.status === 'ready') {
+      msg = `✅ Dear ${job.customer}, your *${job.vehicle}* (${job.plate}) is *READY FOR COLLECTION*!\n\nPlease proceed to the billing counter at *${BRANCHES[job.branch]}*.\n\nInvoice: *${updates.invoice||job.invoice||'-'}*\nAmount: *AED ${updates.amount||job.amount||0}*\n\n🔥 *Toufan Garage*`;
+    } else {
+      const sc = STATUS_CFG[updates.status];
+      msg = `Dear ${job.customer}, update on your *${job.vehicle}* (${job.plate}):\n\n📊 Status: *${sc?.label}*\n🔧 Technician: *${updates.mechanic||job.mechanic||'Being assigned'}*\n${note?'📝 '+note+'\n':''}\nWe'll notify you when ready! 🔥 *Toufan*`;
+    }
+    window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`,'_blank');
+  }
+}
+
+function sendWA(id) {
+  const job = Object.values(allJobs).find(j=>j.id===id) || allJobs[id];
+  if (!job || !job.phone) return;
+  const sc = STATUS_CFG[job.status]||{label:'In Progress'};
+  const msg = `Dear ${job.customer}, update on your *${job.vehicle}* (${job.plate}):\n\n📊 Status: *${sc.label}*\n🔧 Technician: *${job.mechanic||'Being assigned'}*\n📍 ${BRANCHES[job.branch]}\n\n🔥 *Toufan Garage*`;
+  window.open(`https://wa.me/${job.phone.replace(/\D/g,'')}?text=${encodeURIComponent(msg)}`,'_blank');
+  closeOverlay('overlay-detail');
+}
+
+async function markPaid(id) {
+  closeOverlay('overlay-detail');
+  openUpdateModal(id);
+}
+
+// ============ NEW JOB ============
+function openNewJobModal() {
+  const role = currentProfile?.role;
+  const myBranch = currentProfile?.branch;
+  const branchStaff = Object.values(allStaff).filter(s => s.branch === (myBranch||'TAC') && ['mechanic','tyres','supervisor'].includes(s.role));
+  const advisors = Object.values(allStaff).filter(s => s.branch === (myBranch||'TAC') && s.role === 'advisor');
+
+  document.getElementById('job-modal-title').textContent = 'New Job Card';
+  document.getElementById('job-modal-body').innerHTML = `
+    <div class="form-section">
+      <div class="fsec-title">Branch & Team</div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Branch</label>
+          <select class="form-control" id="nj-branch" onchange="reloadBranchStaff()">
+            ${Object.entries(BRANCHES).map(([k,v])=>`<option value="${k}" ${k===(myBranch||'TAC')?'selected':''}>${v.split(' ').slice(1).join(' ')}</option>`).join('')}
+          </select>
+        </div>
+        <div class="form-group"><label class="form-label">Service Advisor</label>
+          <select class="form-control" id="nj-advisor">
+            <option value="${currentProfile?.uid||''}" data-name="${currentProfile?.name||''}">${currentProfile?.name||'Me'}</option>
+            ${advisors.filter(a=>a.uid!==currentProfile?.uid).map(a=>`<option value="${a.uid}" data-name="${a.name}">${a.name}</option>`).join('')}
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Assign Mechanic</label>
+          <select class="form-control" id="nj-mechanic">
+            <option value="">Assign Later</option>
+            ${branchStaff.map(s=>`<option value="${s.uid}" data-name="${s.name}">${s.name} (${s.role})</option>`).join('')}
+          </select>
+        </div>
+        <div class="form-group"><label class="form-label">Job Type</label>
+          <select class="form-control" id="nj-type">
+            <option value="mechanical">Mechanical</option>
+            <option value="tyres">Tyres</option>
+            <option value="electrical">Electrical</option>
+            <option value="fullservice">Full Service</option>
+            <option value="bodywork">Body Work</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div class="form-section">
+      <div class="fsec-title">Vehicle & Customer</div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Plate No.</label><input type="text" class="form-control" id="nj-plate" placeholder="A 12345"></div>
+        <div class="form-group"><label class="form-label">Vehicle</label><input type="text" class="form-control" id="nj-vehicle" placeholder="Toyota - Camry"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Year</label><input type="text" class="form-control" id="nj-year" placeholder="2022"></div>
+        <div class="form-group"><label class="form-label">Mileage (km)</label><input type="number" class="form-control" id="nj-mileage"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Customer Name</label><input type="text" class="form-control" id="nj-customer"></div>
+        <div class="form-group"><label class="form-label">Customer WhatsApp</label><input type="tel" class="form-control" id="nj-phone" placeholder="+971..."></div>
+      </div>
+    </div>
+    <div class="form-section">
+      <div class="fsec-title">Services</div>
+      <div id="nj-services-list"></div>
+      <button class="btn btn-ghost" style="margin-top:6px;" onclick="addSvcLine()">+ Add Service / Part</button>
+    </div>
+    <div class="form-section">
+      <div class="fsec-title">Status & Priority</div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Initial Status</label>
+          <select class="form-control" id="nj-status">
+            <option value="diagnostic">⚙️ Diagnostic</option>
+            <option value="service">🔧 Service In Progress</option>
+            <option value="waiting">📦 Waiting for Parts</option>
+            <option value="hold">⏸️ On Hold</option>
+          </select>
+        </div>
+        <div class="form-group"><label class="form-label">Priority</label>
+          <select class="form-control" id="nj-priority">
+            <option value="normal">Normal</option>
+            <option value="express">⚡ Express</option>
+            <option value="urgent">🔴 Urgent</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group" style="margin-top:8px;"><label class="form-label">Notes / Complaint</label><textarea class="form-control" id="nj-notes" placeholder="Customer complaint or special instructions..."></textarea></div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-gold" onclick="saveNewJob(false)">💾 Create Job Card</button>
+      <button class="btn btn-wa" onclick="saveNewJob(true)">📲 Create + Notify Customer</button>
+    </div>`;
+  addSvcLine(); addSvcLine();
+  openOverlay('overlay-job');
+}
+
+function reloadBranchStaff() {
+  const branch = document.getElementById('nj-branch')?.value;
+  if (!branch) return;
+  const staff = Object.values(allStaff).filter(s => s.branch === branch && ['mechanic','tyres','supervisor'].includes(s.role));
+  const el = document.getElementById('nj-mechanic');
+  if (el) el.innerHTML = `<option value="">Assign Later</option>` + staff.map(s=>`<option value="${s.uid}" data-name="${s.name}">${s.name}</option>`).join('');
+}
+
+function addSvcLine() {
+  const list = document.getElementById('nj-services-list');
+  const div = document.createElement('div');
+  div.style.cssText = 'display:flex;gap:6px;margin-bottom:6px;';
+  div.innerHTML = `<input type="text" class="form-control svc-line" placeholder="Service or part..." style="flex:1;"><button onclick="this.parentElement.remove()" style="background:rgba(255,23,68,.12);border:1px solid rgba(255,23,68,.25);color:var(--red);border-radius:6px;padding:0 10px;cursor:pointer;font-size:15px;">✕</button>`;
+  list.appendChild(div);
+}
+
+async function saveNewJob(notify) {
+  const plate = document.getElementById('nj-plate')?.value.trim();
+  if (!plate) { showToast('Enter plate number'); return; }
+  const services = [...document.querySelectorAll('.svc-line')].map(i=>i.value).filter(Boolean);
+  const mechEl = document.getElementById('nj-mechanic');
+  const advEl = document.getElementById('nj-advisor');
+  const mechUid = mechEl?.value || '';
+  const mechName = mechUid ? (mechEl.options[mechEl.selectedIndex]?.dataset?.name || mechEl.options[mechEl.selectedIndex]?.text || '') : '';
+  const advUid = advEl?.value || currentUser?.uid;
+  const advName = advEl ? (advEl.options[advEl.selectedIndex]?.dataset?.name || advEl.options[advEl.selectedIndex]?.text || '') : currentProfile?.name;
+  const branch = document.getElementById('nj-branch')?.value || currentProfile?.branch;
+
+  const jcNum = Date.now();
+  const jobId = 'JC-' + jcNum.toString().slice(-5);
+
+  const job = {
+    id: jobId, branch, plate,
+    vehicle: document.getElementById('nj-vehicle')?.value || '',
+    year: document.getElementById('nj-year')?.value || '',
+    mileage: document.getElementById('nj-mileage')?.value || '',
+    customer: document.getElementById('nj-customer')?.value || '',
+    phone: document.getElementById('nj-phone')?.value || '',
+    services, status: document.getElementById('nj-status')?.value || 'diagnostic',
+    priority: document.getElementById('nj-priority')?.value || 'normal',
+    type: document.getElementById('nj-type')?.value || 'mechanical',
+    advisor: advName, advisorUid: advUid,
+    mechanic: mechName, mechanicUid: mechUid,
+    notes: document.getElementById('nj-notes')?.value || '',
+    invoice: '', amount: 0, paid: false,
+    createdAt: Date.now(), createdBy: currentUser?.uid,
+    log: [{time:nowTime(), msg:`Job created by ${currentProfile?.name}`}]
+  };
+
+  await db.ref('jobs/' + jobId).set(job);
+  closeOverlay('overlay-job');
+  showToast(jobId + ' created!');
+
+  // Notify mechanic
+  if (mechUid && mechName) {
+    const mechProfile = Object.values(allStaff).find(s=>s.uid===mechUid);
+    if (mechProfile?.phone) {
+      const mMsg = `🔧 Dear ${mechName}, you have been assigned a new job!\n\nJob: *${jobId}*\n🚗 Vehicle: *${job.vehicle}* (${plate})\n⚙️ Services: ${services.join(', ')}\n📍 Branch: ${BRANCHES[branch]}\n\nCheck the workshop board! 🔥 *Toufan*`;
+      setTimeout(() => window.open(`https://wa.me/${mechProfile.phone.replace(/\D/g,'')}?text=${encodeURIComponent(mMsg)}`,'_blank'), 500);
+    }
+  }
+
+  if (notify && job.phone) {
+    const phone = job.phone.replace(/\D/g,'');
+    const sc = STATUS_CFG[job.status];
+    const msg = `Dear ${job.customer||'Valued Customer'}, your *${job.vehicle}* (${plate}) has been received at *${BRANCHES[branch]}*.\n\nJob Card: *${jobId}*\nStatus: *${sc?.label}*\nTechnician: *${mechName||'Being assigned'}*\n\nWe will keep you updated every step! 🔥\n\n*Toufan Garage* · TRN: 100237588900003`;
+    window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`,'_blank');
+  }
+}
+
+// ============ RECEPTION BOARD ============
+const PROG_COLS = [
+  {key:'diagnostic',label:'Diagnostic',icon:'⚙️',color:'var(--red)'},
+  {key:'service',   label:'Service',   icon:'🔧',color:'var(--orange)'},
+  {key:'quality',   label:'Quality',   icon:'🔍',color:'var(--gold)'},
+  {key:'testdrive', label:'Test Drive',icon:'🚗',color:'var(--cyan)'},
+  {key:'ready',     label:'Ready ✅',  icon:'✅',color:'var(--green)'},
+];
+
+function filterReception(v) { receptionFilter = v; renderReception(); }
+
+function renderReception() {
+  let jobs = Object.values(allJobs);
+  if (receptionFilter !== 'all') jobs = jobs.filter(j=>j.branch===receptionFilter);
+  const table = document.getElementById('prog-table');
+  table.innerHTML = PROG_COLS.map(col => {
+    const colJobs = jobs.filter(j => col.key === 'ready' ? (j.status==='ready'||j.status==='paid') : j.status===col.key);
+    return `<div class="prog-col">
+      <div class="prog-col-head">
+        <div class="prog-icon">${col.icon}</div>
+        <div class="prog-label" style="color:${col.color}">${col.label}</div>
+      </div>
+      <div class="prog-body">
+        ${colJobs.length ? colJobs.map(j=>`
+          <div class="prog-item" onclick="openJobDetail('${j.id}')">
+            <div class="prog-plate" style="color:${col.color}">${j.plate}</div>
+            <div class="prog-car">${j.vehicle}</div>
+            ${j.paid ? `<div class="prog-inv" style="color:var(--green)">✅ ${j.invoice||''} Paid</div>` : j.invoice ? `<div class="prog-inv" style="color:var(--text3)">${j.invoice}</div>` : ''}
+          </div>`).join('') : `<div class="empty-col">—</div>`}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ============ DISPATCH BOARD ============
+function filterDispatch(v) { dispatchFilter = v; renderDispatch(); }
+
+function renderDispatch() {
+  let jobs = Object.values(allJobs).filter(j=>j.status!=='paid');
+  let staff = Object.values(allStaff).filter(s=>['mechanic','tyres','supervisor'].includes(s.role));
+  if (dispatchFilter !== 'all') {
+    jobs = jobs.filter(j=>j.branch===dispatchFilter);
+    staff = staff.filter(s=>s.branch===dispatchFilter);
+  }
+  const container = document.getElementById('dispatch-cols');
+  const cols = staff.map(s => {
+    const sJobs = jobs.filter(j=>j.mechanicUid===s.uid);
+    const color = s.color || STAFF_COLORS[0];
+    return `<div class="d-col">
+      <div class="d-col-head">
+        <div><div class="d-mech" style="color:${color}">${s.name.split(' ')[0]}</div><div class="d-role">${s.role} · ${BRANCHES[s.branch]?.split(' ')[1]||s.branch}</div></div>
+        <div class="d-cnt">${sJobs.length}</div>
+      </div>
+      <div class="d-col-body">
+        ${sJobs.length ? sJobs.map(j=>{
+          const sc = STATUS_CFG[j.status]||{};
+          return `<div class="d-job st-${j.status}" onclick="openUpdateModal('${j.id}')">
+            <div class="d-plate">${j.plate}</div>
+            <div class="d-car">${j.vehicle}</div>
+            <div style="margin-top:4px;"><span class="badge b-${j.status}">${sc.icon||''} ${sc.label||j.status}</span></div>
+            <div class="d-svc">${(j.services||[]).slice(0,2).join(' · ')}${(j.services||[]).length>2?' +'+((j.services||[]).length-2)+' more':''}</div>
+          </div>`;
+        }).join('') : `<div style="text-align:center;padding:20px 10px;color:var(--text3);font-size:11px;">No jobs</div>`}
+      </div>
+    </div>`;
+  });
+  // Unassigned column
+  const unassigned = jobs.filter(j=>!j.mechanicUid||!staff.find(s=>s.uid===j.mechanicUid));
+  cols.unshift(`<div class="d-col">
+    <div class="d-col-head"><div><div class="d-mech" style="color:var(--text3)">Unassigned</div><div class="d-role">Pending</div></div><div class="d-cnt" style="color:var(--red)">${unassigned.length}</div></div>
+    <div class="d-col-body">
+      ${unassigned.length ? unassigned.map(j=>`<div class="d-job st-${j.status}" onclick="openUpdateModal('${j.id}')"><div class="d-plate">${j.plate}</div><div class="d-car">${j.vehicle}</div><span class="badge b-${j.status}">${STATUS_CFG[j.status]?.icon||''} ${STATUS_CFG[j.status]?.label||j.status}</span></div>`).join('') : `<div style="text-align:center;padding:20px;color:var(--text3);font-size:11px;">All assigned ✅</div>`}
+    </div>
+  </div>`);
+  container.innerHTML = cols.join('');
+}
+
+// ============ SETTINGS ============
+function renderSettings() {
+  const role = currentProfile?.role;
+  if (!['admin','supervisor','manager'].includes(role)) {
+    document.getElementById('settings-content').innerHTML = `<div style="text-align:center;padding:40px;color:var(--text3)">Settings available to Admin only</div>`;
+    return;
+  }
+  renderStaffSettings();
+}
+
+function renderStaffSettings() {
+  const branchStaff = Object.values(allStaff).filter(s=>s.branch===currentStaffBranch);
+  document.getElementById('settings-content').innerHTML = `
+    <div style="background:var(--s1);border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:12px;">
+      <div style="font-family:'Rajdhani',sans-serif;font-size:16px;font-weight:700;color:var(--gold);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;">🏢 Company</div>
+      <div style="font-size:12px;color:var(--text2);line-height:1.9;">
+        <div>Toufan Auto Care · Toufan Auto Services Center · Toufan Al Shmal Tyres Changing LLC</div>
+        <div style="color:var(--gold);">TRN: 100237588900003</div>
+      </div>
+    </div>
+    <div style="background:var(--s1);border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:12px;">
+      <div style="font-family:'Rajdhani',sans-serif;font-size:16px;font-weight:700;color:var(--gold);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;">👨‍🔧 Staff Accounts</div>
+      <div class="btabs">
+        <button class="btab ${currentStaffBranch==='TAC'?'active':''}" onclick="switchSettingsBranch('TAC',this)">Auto Care</button>
+        <button class="btab ${currentStaffBranch==='TASC'?'active':''}" onclick="switchSettingsBranch('TASC',this)">Auto Services</button>
+        <button class="btab ${currentStaffBranch==='TAS'?'active':''}" onclick="switchSettingsBranch('TAS',this)">Al Shmal</button>
+      </div>
+      ${branchStaff.map((s,i) => {
+        const color = s.color || STAFF_COLORS[i%STAFF_COLORS.length];
+        const initials = s.name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+        return `<div class="staff-row">
+          <div class="s-av" style="background:${color}20;color:${color};">${initials}</div>
+          <div class="s-info">
+            <div class="s-name">${s.name}</div>
+            <div class="s-det">${s.role} · ${s.email||''} · ${s.phone||'No phone'}</div>
+          </div>
+          <span class="role-tag role-${s.role}" style="margin-right:6px;">${s.role}</span>
+        </div>`;
+      }).join('')}
+      ${branchStaff.length===0?`<div style="text-align:center;padding:16px;color:var(--text3);font-size:12px;">No staff in this branch yet</div>`:''}
+      <button class="btn btn-gold" style="margin-top:10px;" onclick="openOverlay('overlay-add-staff')">+ Add Staff Account</button>
+    </div>`;
+}
+
+function switchSettingsBranch(branch) {
+  currentStaffBranch = branch;
+  renderStaffSettings();
+}
+
+// ============ CREATE STAFF (Firebase Auth) ============
+async function createStaffUser() {
+  const name = document.getElementById('ns-name').value.trim();
+  const email = document.getElementById('ns-email').value.trim();
+  const pass = document.getElementById('ns-pass').value;
+  const role = document.getElementById('ns-role').value;
+  const branch = document.getElementById('ns-branch').value;
+  const phone = document.getElementById('ns-phone').value.trim();
+  document.getElementById('staff-err').textContent = '';
+  if (!name||!email||!pass) { document.getElementById('staff-err').textContent = 'Fill all required fields'; return; }
+  if (pass.length < 6) { document.getElementById('staff-err').textContent = 'Password must be 6+ characters'; return; }
+
+  try {
+    // Create secondary auth (doesn't sign out current user)
+    const secApp = firebase.initializeApp(firebaseConfig, 'secondary_' + Date.now());
+    const secAuth = secApp.auth();
+    const cred = await secAuth.createUserWithEmailAndPassword(email, pass);
+    const uid = cred.user.uid;
+    const colorIdx = Object.values(allStaff).filter(s=>s.branch===branch).length;
+    await db.ref('staff/' + uid).set({
+      uid, name, email, role, branch, phone,
+      color: STAFF_COLORS[colorIdx % STAFF_COLORS.length],
+      createdAt: Date.now()
+    });
+    await secAuth.signOut();
+    await secApp.delete();
+    closeOverlay('overlay-add-staff');
+    showToast(name + ' account created!');
+    renderStaffSettings();
+  } catch(e) {
+    document.getElementById('staff-err').textContent = e.message;
+  }
+}
+
+// ============ HELPERS ============
+function openOverlay(id) { document.getElementById(id).classList.add('open'); }
+function closeOverlay(id) { document.getElementById(id).classList.remove('open'); }
+document.querySelectorAll('.overlay').forEach(o => o.addEventListener('click', e => { if(e.target===o) o.classList.remove('open'); }));
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2500);
+}
+
+function nowTime() { return new Date().toLocaleTimeString('en-AE',{hour:'2-digit',minute:'2-digit'}); }
+function todayStr() { return new Date().toISOString().split('T')[0]; }
+
+
+// ============================
+// INVENTORY MODULE
+// ============================
+let invBranchFilter = 'all';
+let invSearchFilter = '';
+
+function listenToInventory() {
+  db.ref('inventory').on('value', snap => {
+    appData.inventory = snap.val() || {};
+    const active = document.querySelector('.page.active');
+    if (active && active.id === 'page-inventory') renderInventory();
+    updateLowStockAlert();
+  });
+}
+
+function updateLowStockAlert() {
+  const parts = Object.values(appData.inventory || {});
+  const low = parts.filter(p => {
+    const stock = getBranchStock(p, invBranchFilter);
+    return stock <= (p.minStock || 0);
+  });
+  // Update home stat if visible
+  const el = document.getElementById('inv-stat-low');
+  if (el) el.textContent = low.length;
+}
+
+function getBranchStock(part, branch) {
+  if (branch === 'all') return (part.stockTAC||0) + (part.stockTASC||0) + (part.stockTAS||0);
+  if (branch === 'TAC') return part.stockTAC||0;
+  if (branch === 'TASC') return part.stockTASC||0;
+  if (branch === 'TAS') return part.stockTAS||0;
+  return 0;
+}
+
+function setInvBranch(branch, el) {
+  invBranchFilter = branch;
+  document.querySelectorAll('.inv-filter-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  renderInventory();
+}
+
+function filterInventory(val) {
+  invSearchFilter = val.toLowerCase();
+  renderInventory();
+}
+
+function renderInventory() {
+  const role = currentProfile?.role;
+  const addBtn = document.getElementById('add-part-btn');
+  if (addBtn) addBtn.style.display = ['admin','manager','supervisor'].includes(role) ? '' : 'none';
+
+  // Render branch filter buttons
+  const filterDiv = document.getElementById('inv-branch-filter');
+  if (filterDiv && !filterDiv.children.length) {
+    filterDiv.innerHTML = ['all','TAC','TASC','TAS'].map((b,i) => {
+      const labels = ['All Branches','Auto Care','Auto Services','Al Shmal'];
+      return `<button class="inv-filter-btn ${b===invBranchFilter?'active':''}" onclick="setInvBranch('${b}',this)">${labels[i]}</button>`;
+    }).join('');
+  }
+
+  const parts = Object.values(appData.inventory || {});
+  let filtered = parts;
+  if (invSearchFilter) {
+    filtered = parts.filter(p =>
+      (p.name||'').toLowerCase().includes(invSearchFilter) ||
+      (p.partNo||'').toLowerCase().includes(invSearchFilter) ||
+      (p.carMake||'').toLowerCase().includes(invSearchFilter) ||
+      (p.carModel||'').toLowerCase().includes(invSearchFilter) ||
+      (p.category||'').toLowerCase().includes(invSearchFilter)
+    );
+  }
+
+  const total = filtered.length;
+  const low = filtered.filter(p => getBranchStock(p, invBranchFilter) <= (p.minStock||0) && getBranchStock(p, invBranchFilter) > 0).length;
+  const outOf = filtered.filter(p => getBranchStock(p, invBranchFilter) === 0).length;
+  const needOrder = filtered.filter(p => getBranchStock(p, invBranchFilter) <= (p.minStock||0)).length;
+  const fast = filtered.filter(p => p.fastMoving).length;
+
+  document.getElementById('inv-stat-total').textContent = total;
+  document.getElementById('inv-stat-low').textContent = low + outOf;
+  document.getElementById('inv-stat-order').textContent = needOrder;
+  document.getElementById('inv-stat-fast').textContent = fast;
+
+  const list = document.getElementById('inventory-list');
+  if (!filtered.length) {
+    list.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text3);">No parts found</div>';
+    return;
+  }
+
+  // Sort: out of stock first, then low, then ok
+  filtered.sort((a,b) => {
+    const sa = getBranchStock(a, invBranchFilter);
+    const sb = getBranchStock(b, invBranchFilter);
+    const ma = a.minStock||0, mb = b.minStock||0;
+    if (sa === 0 && sb > 0) return -1;
+    if (sb === 0 && sa > 0) return 1;
+    if (sa <= ma && sb > mb) return -1;
+    if (sb <= mb && sa > ma) return 1;
+    return (a.name||'').localeCompare(b.name||'');
+  });
+
+  list.innerHTML = filtered.map(p => {
+    const totalStock = getBranchStock(p, 'all');
+    const branchStock = getBranchStock(p, invBranchFilter);
+    const minStock = p.minStock || 0;
+    const isOut = branchStock === 0;
+    const isLow = branchStock > 0 && branchStock <= minStock;
+    const cardClass = isOut ? 'low' : isLow ? 'order' : 'ok';
+    const stockColor = isOut ? 'var(--red)' : isLow ? 'var(--orange)' : 'var(--green)';
+    const statusLabel = isOut ? '❌ OUT OF STOCK' : isLow ? '⚠️ LOW STOCK' : '✅ IN STOCK';
+    return `<div class="part-card ${cardClass}" onclick="openPartDetail('${p.id}')">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+        <div>
+          <div class="part-name">${p.name}</div>
+          <div class="part-num">${p.partNo||''} ${p.barcode?'· '+p.barcode:''}</div>
+          <div class="part-car">${p.carMake||''} ${p.carModel||''} ${p.yearFrom?p.yearFrom+'-'+(p.yearTo||''):''}</div>
+        </div>
+        <div style="text-align:right;flex-shrink:0;">
+          <div style="font-family:'Rajdhani',sans-serif;font-size:11px;font-weight:700;color:${stockColor}">${statusLabel}</div>
+          <div style="font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700;color:${stockColor}">${branchStock}</div>
+          <div style="font-size:9px;color:var(--text3);">MIN: ${minStock}</div>
+        </div>
+      </div>
+      <div class="stock-pills">
+        <div class="stock-pill"><div class="stock-pill-label">Auto Care</div><div class="stock-pill-val" style="color:${(p.stockTAC||0)<=minStock?'var(--red)':'var(--green)'}">${p.stockTAC||0}</div></div>
+        <div class="stock-pill"><div class="stock-pill-label">Auto Svc</div><div class="stock-pill-val" style="color:${(p.stockTASC||0)<=minStock?'var(--red)':'var(--green)'}">${p.stockTASC||0}</div></div>
+        <div class="stock-pill"><div class="stock-pill-label">Al Shmal</div><div class="stock-pill-val" style="color:${(p.stockTAS||0)<=minStock?'var(--red)':'var(--green)'}">${p.stockTAS||0}</div></div>
+        <div class="stock-pill"><div class="stock-pill-label">Category</div><div class="stock-pill-val" style="font-size:11px;color:var(--text2)">${p.category||'-'}</div></div>
+        ${p.fastMoving?'<div class="stock-pill"><div class="stock-pill-label">Fast</div><div class="stock-pill-val" style="font-size:11px;color:var(--gold)">⚡ YES</div></div>':''}
+      </div>
+      ${isOut||isLow ? `<div class="notify-bar">
+        <span class="notify-bar-msg">📢 ${isOut?'OUT OF STOCK':'LOW STOCK'} — notify advisors?</span>
+        <button onclick="event.stopPropagation();notifyAdvisors('${p.id}')" class="btn btn-wa" style="padding:5px 12px;font-size:11px;width:auto;">📲 Notify</button>
+      </div>` : ''}
+    </div>`;
+  }).join('');
+}
+
+function openPartDetail(id) {
+  const p = (appData.inventory||{})[id];
+  if (!p) return;
+  const role = currentProfile?.role;
+  const canEdit = ['admin','manager','supervisor'].includes(role);
+  const totalStock = (p.stockTAC||0)+(p.stockTASC||0)+(p.stockTAS||0);
+  const isOut = totalStock === 0;
+  const isLow = totalStock > 0 && totalStock <= (p.minStock||0);
+
+  document.getElementById('detail-title').textContent = p.name;
+  document.getElementById('detail-body').innerHTML = `
+    <div class="kv-grid">
+      <div class="kv"><div class="kv-l">Part No.</div><div class="kv-v" style="color:var(--cyan)">${p.partNo||'-'}</div></div>
+      <div class="kv"><div class="kv-l">Category</div><div class="kv-v">${p.category||'-'}</div></div>
+      <div class="kv"><div class="kv-l">Car Make</div><div class="kv-v">${p.carMake||'-'}</div></div>
+      <div class="kv"><div class="kv-l">Car Model</div><div class="kv-v">${p.carModel||'-'}</div></div>
+      <div class="kv"><div class="kv-l">Year</div><div class="kv-v">${p.yearFrom||'-'} – ${p.yearTo||'-'}</div></div>
+      <div class="kv"><div class="kv-l">Min Stock</div><div class="kv-v" style="color:var(--orange)">${p.minStock||0}</div></div>
+      <div class="kv"><div class="kv-l">Supplier</div><div class="kv-v">${p.supplier||'-'}</div></div>
+      <div class="kv"><div class="kv-l">Best Price</div><div class="kv-v" style="color:var(--gold)">${p.bestPrice?'AED '+p.bestPrice:'-'}</div></div>
+    </div>
+    <div style="background:var(--s2);border-radius:8px;padding:12px;margin-bottom:12px;">
+      <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;">Stock Per Branch</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;">
+        ${[['Auto Care','stockTAC'],['Auto Services','stockTASC'],['Al Shmal','stockTAS']].map(([label,key])=>`
+          <div style="text-align:center;background:var(--s1);border-radius:6px;padding:8px;">
+            <div style="font-size:10px;color:var(--text3);">${label}</div>
+            <div style="font-family:'Rajdhani',sans-serif;font-size:24px;font-weight:700;color:${(p[key]||0)<=(p.minStock||0)?'var(--red)':'var(--green)'};">${p[key]||0}</div>
+            ${canEdit?`<div style="display:flex;gap:4px;justify-content:center;margin-top:4px;">
+              <button onclick="adjustStock('${id}','${key}',-1)" style="background:var(--s3);border:1px solid var(--border);border-radius:4px;padding:2px 8px;color:var(--red);cursor:pointer;font-size:14px;">-</button>
+              <button onclick="adjustStock('${id}','${key}',1)" style="background:var(--s3);border:1px solid var(--border);border-radius:4px;padding:2px 8px;color:var(--green);cursor:pointer;font-size:14px;">+</button>
+            </div>`:''}
+          </div>`).join('')}
+      </div>
+    </div>
+    ${p.notes?`<div style="background:var(--s2);border-radius:8px;padding:10px;margin-bottom:10px;font-size:12px;color:var(--text2);">${p.notes}</div>`:''}
+    <div style="display:flex;flex-direction:column;gap:8px;">
+      <button class="btn btn-wa" onclick="notifyAdvisors('${id}')">📲 Notify All Advisors on WhatsApp</button>
+      ${isOut||isLow?`<button class="btn btn-gold" onclick="notifyAdvisors('${id}',true)">🚨 Alert: Part ${isOut?'Out of Stock':'Low'}</button>`:''}
+    </div>`;
+  openOverlay('overlay-detail');
+}
+
+async function adjustStock(partId, key, delta) {
+  const part = (appData.inventory||{})[partId];
+  if (!part) return;
+  const newVal = Math.max(0, (part[key]||0) + delta);
+  await db.ref('inventory/' + partId + '/' + key).set(newVal);
+  showToast('Stock updated');
+}
+
+function notifyAdvisors(partId, urgent) {
+  const p = (appData.inventory||{})[partId];
+  if (!p) return;
+  const advisors = Object.values(allStaff).filter(s => ['advisor','manager','supervisor'].includes(s.role) && s.phone);
+  if (!advisors.length) { showToast('No advisor phones found'); return; }
+  const totalStock = (p.stockTAC||0)+(p.stockTASC||0)+(p.stockTAS||0);
+  const isOut = totalStock === 0;
+  const msg = isOut
+    ? `🚨 *STOCK ALERT* 🚨\n\nPart *${p.name}* (${p.partNo||''}) is *OUT OF STOCK* across all branches.\n\nPlease advise customers accordingly and arrange reorder from *${p.supplier||'supplier'}*.\n\n🔥 Toufan Inventory System`
+    : `⚠️ *LOW STOCK ALERT*\n\nPart *${p.name}* (${p.partNo||''}) stock is low:\n• Auto Care: ${p.stockTAC||0}\n• Auto Services: ${p.stockTASC||0}\n• Al Shmal: ${p.stockTAS||0}\n\nMin level: ${p.minStock||0} · Reorder from: ${p.supplier||'-'}\n\n🔥 Toufan Inventory System`;
+
+  // Open WA for first advisor, show toast for others
+  const first = advisors[0];
+  window.open('https://wa.me/' + first.phone.replace(/\D/g,'') + '?text=' + encodeURIComponent(msg), '_blank');
+  if (advisors.length > 1) {
+    setTimeout(() => {
+      advisors.slice(1).forEach((a,i) => {
+        setTimeout(() => window.open('https://wa.me/' + a.phone.replace(/\D/g,'') + '?text=' + encodeURIComponent(msg), '_blank'), i*800);
+      });
+    }, 1000);
+  }
+  showToast('Notifying ' + advisors.length + ' advisor(s)!');
+  closeOverlay('overlay-detail');
+}
+
+// Add part modal
+function openAddPartModal() {
+  document.getElementById('job-modal-title').textContent = 'Add New Part';
+  document.getElementById('job-modal-body').innerHTML = `
+    <div class="form-section">
+      <div class="fsec-title">Part Information</div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Part Name</label><input type="text" class="form-control" id="np-name" placeholder="e.g. Oil Filter"></div>
+        <div class="form-group"><label class="form-label">Part Number</label><input type="text" class="form-control" id="np-partno" placeholder="e.g. 90915-YZZE1"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Barcode</label><input type="text" class="form-control" id="np-barcode"></div>
+        <div class="form-group"><label class="form-label">Category</label>
+          <select class="form-control" id="np-cat">
+            <option>Filters</option><option>Brakes</option><option>Tyres</option><option>Oil & Fluids</option>
+            <option>Engine</option><option>Suspension</option><option>Electrical</option><option>Body Parts</option>
+            <option>Belts & Chains</option><option>Batteries</option><option>Other</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Car Make</label><input type="text" class="form-control" id="np-make" placeholder="e.g. Toyota"></div>
+        <div class="form-group"><label class="form-label">Car Model</label><input type="text" class="form-control" id="np-model" placeholder="e.g. Camry"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Year From</label><input type="number" class="form-control" id="np-yfrom" placeholder="2018"></div>
+        <div class="form-group"><label class="form-label">Year To</label><input type="number" class="form-control" id="np-yto" placeholder="2024"></div>
+      </div>
+    </div>
+    <div class="form-section">
+      <div class="fsec-title">Stock & Pricing</div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Auto Care Stock</label><input type="number" class="form-control" id="np-tac" value="0"></div>
+        <div class="form-group"><label class="form-label">Auto Services Stock</label><input type="number" class="form-control" id="np-tasc" value="0"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Al Shmal Stock</label><input type="number" class="form-control" id="np-tas" value="0"></div>
+        <div class="form-group"><label class="form-label">Min Stock (Reorder Level)</label><input type="number" class="form-control" id="np-min" value="5"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Preferred Supplier</label><input type="text" class="form-control" id="np-supplier"></div>
+        <div class="form-group"><label class="form-label">Best Price (AED)</label><input type="number" class="form-control" id="np-price"></div>
+      </div>
+      <div class="form-group"><label class="form-label">Notes</label><textarea class="form-control" id="np-notes" placeholder="Compatible models, special instructions..."></textarea></div>
+    </div>
+    <button class="btn btn-gold" onclick="saveNewPart()">💾 Add to Inventory</button>`;
+  openOverlay('overlay-job');
+}
+
+async function saveNewPart() {
+  const name = document.getElementById('np-name')?.value.trim();
+  if (!name) { showToast('Enter part name'); return; }
+  const id = 'PART-' + Date.now();
+  const tac = parseInt(document.getElementById('np-tac')?.value)||0;
+  const tasc = parseInt(document.getElementById('np-tasc')?.value)||0;
+  const tas = parseInt(document.getElementById('np-tas')?.value)||0;
+  const minStock = parseInt(document.getElementById('np-min')?.value)||5;
+  const part = {
+    id, name,
+    partNo: document.getElementById('np-partno')?.value||'',
+    barcode: document.getElementById('np-barcode')?.value||'',
+    category: document.getElementById('np-cat')?.value||'',
+    carMake: document.getElementById('np-make')?.value||'',
+    carModel: document.getElementById('np-model')?.value||'',
+    yearFrom: document.getElementById('np-yfrom')?.value||'',
+    yearTo: document.getElementById('np-yto')?.value||'',
+    stockTAC: tac, stockTASC: tasc, stockTAS: tas,
+    minStock,
+    supplier: document.getElementById('np-supplier')?.value||'',
+    bestPrice: parseFloat(document.getElementById('np-price')?.value)||0,
+    notes: document.getElementById('np-notes')?.value||'',
+    fastMoving: false,
+    createdAt: Date.now(),
+    createdBy: currentProfile?.name
+  };
+  await db.ref('inventory/' + id).set(part);
+  closeOverlay('overlay-job');
+  showToast(name + ' added to inventory!');
+}
+
+// Auto-refresh every 30s
+setInterval(() => {
+  const active = document.querySelector('.page.active');
+  if (!active) return;
+  const id = active.id.replace('page-','');
+  if (id==='reception') renderReception();
+  else if (id==='dispatch') renderDispatch();
+}, 30000);
+</script>
+</body>
+</html>

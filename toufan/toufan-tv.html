@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Toufan — Workshop TV</title>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@600;700&family=Exo+2:wght@400;600&display=swap" rel="stylesheet">
+<style>
+* { box-sizing:border-box; margin:0; padding:0; }
+html,body { height:100vh; overflow:hidden; background:#050505; color:#f0f0f0; font-family:'Exo 2',sans-serif; display:flex; flex-direction:column; }
+
+.header {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:10px 28px; background:#0a0a0a; border-bottom:3px solid #f0a500;
+  height:68px; flex-shrink:0;
+}
+.logo { font-family:'Rajdhani',sans-serif; font-size:36px; font-weight:700; color:#f0a500; letter-spacing:4px; }
+.hcenter { text-align:center; }
+.board-title { font-family:'Rajdhani',sans-serif; font-size:18px; font-weight:700; color:#fff; letter-spacing:3px; }
+.live { display:inline-flex; align-items:center; gap:5px; font-size:10px; color:#00e676; letter-spacing:2px; }
+.dot { width:7px; height:7px; background:#00e676; border-radius:50%; animation:pulse 1.4s infinite; }
+@keyframes pulse { 0%,100%{opacity:1;} 50%{opacity:0.2;} }
+.hright { text-align:right; }
+.clock { font-family:'Rajdhani',sans-serif; font-size:38px; font-weight:700; color:#f0a500; line-height:1; }
+.datestr { font-size:11px; color:#555; letter-spacing:1px; margin-top:2px; }
+
+/* TICKER */
+.ticker { background:#111; border-bottom:1px solid #1a1a1a; height:34px; overflow:hidden; display:flex; align-items:center; flex-shrink:0; }
+.ticker-inner { display:flex; animation:scroll 45s linear infinite; white-space:nowrap; gap:80px; }
+@keyframes scroll { 0%{transform:translateX(0);} 100%{transform:translateX(-50%);} }
+.ticker-item { font-family:'Rajdhani',sans-serif; font-size:14px; font-weight:600; color:#f0a500; letter-spacing:1px; flex-shrink:0; }
+
+/* BOARD */
+.board { display:grid; grid-template-columns:repeat(5,1fr); gap:8px; padding:8px 12px; flex:1; overflow:hidden; }
+
+.col { background:#0d0d0d; border:1px solid #1c1c1c; border-radius:10px; display:flex; flex-direction:column; overflow:hidden; }
+.col-head { padding:9px 12px 8px; border-bottom:1px solid #1a1a1a; display:flex; align-items:center; justify-content:space-between; flex-shrink:0; }
+.col-title { font-family:'Rajdhani',sans-serif; font-size:16px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; }
+.col-cnt { font-family:'Rajdhani',sans-serif; font-size:26px; font-weight:700; opacity:0.25; }
+.col-body { flex:1; overflow-y:auto; padding:7px; scrollbar-width:none; }
+.col-body::-webkit-scrollbar { display:none; }
+
+.col-diagnostic { border-top:3px solid #ff1744; } .col-diagnostic .col-title { color:#ff1744; }
+.col-service    { border-top:3px solid #ff6d00; } .col-service .col-title    { color:#ff6d00; }
+.col-quality    { border-top:3px solid #2979ff; } .col-quality .col-title    { color:#2979ff; }
+.col-testdrive  { border-top:3px solid #00d4ff; } .col-testdrive .col-title  { color:#00d4ff; }
+.col-ready      { border-top:3px solid #00e676; } .col-ready .col-title      { color:#00e676; }
+
+.jcard { background:#141414; border:1px solid #222; border-radius:8px; padding:10px 11px; margin-bottom:7px; animation:fadein 0.4s ease; }
+@keyframes fadein { from{opacity:0;transform:translateY(5px);} to{opacity:1;} }
+.jcard.urgent  { border-left:4px solid #ff1744; }
+.jcard.express { border-left:4px solid #ff6d00; }
+
+.j-plate { font-family:'Rajdhani',sans-serif; font-size:28px; font-weight:700; letter-spacing:2px; line-height:1; }
+.col-diagnostic .j-plate { color:#ff6b6b; }
+.col-service .j-plate    { color:#ffaa55; }
+.col-quality .j-plate    { color:#6699ff; }
+.col-testdrive .j-plate  { color:#00d4ff; }
+.col-ready .j-plate      { color:#00e676; }
+
+.j-vehicle  { font-size:12px; color:#666; margin-top:2px; }
+.j-customer { font-size:13px; color:#ccc; margin-top:5px; font-weight:600; }
+.j-mechanic { font-size:11px; color:#00d4ff; margin-top:3px; }
+.j-services { font-size:10px; color:#444; margin-top:3px; line-height:1.4; }
+.j-amount   { font-family:'Rajdhani',sans-serif; font-size:15px; font-weight:700; color:#f0a500; margin-top:4px; }
+.ptag { display:inline-block; font-family:'Rajdhani',sans-serif; font-size:10px; font-weight:700; padding:2px 7px; border-radius:10px; letter-spacing:1px; margin-top:3px; }
+.empty { text-align:center; padding:20px 10px; color:#1a1a1a; font-family:'Rajdhani',sans-serif; font-size:13px; letter-spacing:2px; }
+
+/* MOTIVATION BAR */
+.motiv-bar {
+  background:linear-gradient(90deg, #0a0800, #120f00, #0a0800);
+  border-top:1px solid #2a2000;
+  padding:8px 28px;
+  display:flex; align-items:center; gap:14px;
+  flex-shrink:0;
+  min-height:42px;
+}
+.motiv-icon { font-size:20px; flex-shrink:0; }
+.motiv-text {
+  font-family:'Rajdhani',sans-serif;
+  font-size:17px; font-weight:700;
+  color:#f0a500; letter-spacing:1px;
+  animation:fadeMsg 1s ease;
+}
+@keyframes fadeMsg { from{opacity:0;} to{opacity:1;} }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="logo">🔥 TOUFAN</div>
+  <div class="hcenter">
+    <div class="board-title">WORKSHOP JOB BOARD</div>
+    <div class="live"><span class="dot"></span>LIVE UPDATES</div>
+  </div>
+  <div class="hright">
+    <div class="clock" id="clock">--:--</div>
+    <div class="datestr" id="datestr">---</div>
+  </div>
+</div>
+
+<div class="ticker"><div class="ticker-inner" id="ticker-inner">
+  <span class="ticker-item" id="t1">Loading...</span>
+  <span class="ticker-item" id="t2">Loading...</span>
+</div></div>
+
+<div class="board">
+  <div class="col col-diagnostic">
+    <div class="col-head"><div class="col-title">⚙️ Diagnostic</div><div class="col-cnt" id="c-d">0</div></div>
+    <div class="col-body" id="b-d"></div>
+  </div>
+  <div class="col col-service">
+    <div class="col-head"><div class="col-title">🔧 In Service</div><div class="col-cnt" id="c-s">0</div></div>
+    <div class="col-body" id="b-s"></div>
+  </div>
+  <div class="col col-quality">
+    <div class="col-head"><div class="col-title">🔍 Quality Check</div><div class="col-cnt" id="c-q">0</div></div>
+    <div class="col-body" id="b-q"></div>
+  </div>
+  <div class="col col-testdrive">
+    <div class="col-head"><div class="col-title">🚗 Test Drive</div><div class="col-cnt" id="c-t">0</div></div>
+    <div class="col-body" id="b-t"></div>
+  </div>
+  <div class="col col-ready">
+    <div class="col-head"><div class="col-title">✅ Ready</div><div class="col-cnt" id="c-r">0</div></div>
+    <div class="col-body" id="b-r"></div>
+  </div>
+</div>
+
+<div class="motiv-bar" id="motiv-bar">
+  <span class="motiv-icon">💪</span>
+  <span class="motiv-text" id="motiv-text">Loading...</span>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+<script>
+firebase.initializeApp({
+  apiKey:"AIzaSyBdeMGPYUEErc_aDwrp8r734Hsxn8e0_cw",
+  authDomain:"toufan-garage.firebaseapp.com",
+  databaseURL:"https://toufan-garage-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId:"toufan-garage",
+  appId:"1:708520067605:web:4e5d6e14cb3be9cba4041c"
+});
+const db = firebase.database();
+
+// Load settings from localStorage (saved by main app)
+function getSettings() {
+  try { const s = localStorage.getItem('toufan_tv'); if(s) return JSON.parse(s); } catch(e){}
+  return {
+    branch: 'all',
+    showMotivation: true,
+    motivation: [
+      '🔥 Excellence is not a skill — it is an attitude!',
+      '💪 Every car we fix is a family we keep safe on the road.',
+      '⭐ Quality is our signature — make every job count!',
+      '🚀 Teamwork makes the dream work — let\'s go Toufan!',
+      '🏆 Be the technician every customer talks about!',
+      '🔧 Pride in your craft shows in every bolt you tighten.',
+      '💡 Work smart, work safe, work with pride!',
+      '🌟 A happy customer is the best reward for great work!',
+      '🤝 We are not just fixing cars — we are building trust.',
+      '💎 Do it right the first time, every time!'
+    ],
+    ticker: '🔥 Toufan Auto Care · Toufan Auto Services Center · Toufan Al Shmal Tyres Changing LLC · TRN: 104126278100003 · Al Khabaisi, Deira, Dubai, UAE',
+    showCustomerName: true,
+    showMechanic: true,
+    showAmount: false
+  };
+}
+
+const CFG = getSettings();
+
+// Setup ticker
+const tickerText = CFG.ticker || '🔥 Toufan Garage · Al Khabaisi, Deira, Dubai';
+document.getElementById('t1').textContent = tickerText;
+document.getElementById('t2').textContent = tickerText;
+
+// Hide motivation bar if disabled
+if (!CFG.showMotivation) document.getElementById('motiv-bar').style.display='none';
+
+// Clock
+function tick() {
+  const n = new Date();
+  document.getElementById('clock').textContent = n.toLocaleTimeString('en-AE',{hour:'2-digit',minute:'2-digit'});
+  document.getElementById('datestr').textContent = n.toLocaleDateString('en-AE',{weekday:'short',day:'numeric',month:'short',year:'numeric'});
+}
+setInterval(tick,1000); tick();
+
+// Motivation rotation
+let motIdx = 0;
+const motMsgs = CFG.motivation || ['🔥 Let\'s do great work today!'];
+function rotateMot() {
+  motIdx = (motIdx+1) % motMsgs.length;
+  const el = document.getElementById('motiv-text');
+  el.style.animation = 'none';
+  setTimeout(()=>{ el.textContent = motMsgs[motIdx]; el.style.animation = ''; }, 50);
+}
+document.getElementById('motiv-text').textContent = motMsgs[0];
+setInterval(rotateMot, 8000);
+
+// Board columns config
+const COLS = [
+  {key:'diagnostic', id:'d'},
+  {key:'service',    id:'s'},
+  {key:'quality',    id:'q'},
+  {key:'testdrive',  id:'t'},
+  {key:'ready',      id:'r'}
+];
+
+function render(jobs) {
+  let active = Object.values(jobs).filter(j=>!['paid','hold'].includes(j.status));
+  
+  // Branch filter
+  if (CFG.branch && CFG.branch !== 'all') {
+    active = active.filter(j => j.branch === CFG.branch);
+  }
+
+  const readyPlates = active.filter(j=>j.status==='ready').map(j=>j.plate);
+  const readyMsg = readyPlates.length
+    ? '✅ READY: ' + readyPlates.join(' · ') + ' — Please go to billing counter'
+    : '✅ No vehicles ready at this moment';
+  document.getElementById('t1').textContent = (CFG.ticker||'') + '   ·   ' + readyMsg;
+  document.getElementById('t2').textContent = (CFG.ticker||'') + '   ·   ' + readyMsg;
+
+  COLS.forEach(({key, id}) => {
+    const colJobs = active.filter(j=>j.status===key);
+    document.getElementById('c-'+id).textContent = colJobs.length;
+    const el = document.getElementById('b-'+id);
+    if (!colJobs.length) { el.innerHTML='<div class="empty">— CLEAR —</div>'; return; }
+    el.innerHTML = colJobs.map(j => {
+      const svcs = (j.services||j.serviceItems?.map(i=>i.desc)||[]).slice(0,2).join(', ');
+      return `<div class="jcard ${j.priority==='urgent'?'urgent':j.priority==='express'?'express':''}">
+        <div class="j-plate">${j.plate}</div>
+        <div class="j-vehicle">${j.vehicle||''} ${j.year||''}</div>
+        ${CFG.showCustomerName && j.customer ? `<div class="j-customer">👤 ${j.customer}</div>` : ''}
+        ${CFG.showMechanic && j.mechanic ? `<div class="j-mechanic">🔧 ${j.mechanic}</div>` : ''}
+        ${svcs ? `<div class="j-services">${svcs}</div>` : ''}
+        ${CFG.showAmount && j.amount ? `<div class="j-amount">AED ${parseFloat(j.amount).toFixed(2)}</div>` : ''}
+        ${j.priority==='urgent' ? '<span class="ptag" style="background:rgba(255,23,68,.2);color:#ff1744;">🔴 URGENT</span>' : ''}
+        ${j.priority==='express' ? '<span class="ptag" style="background:rgba(255,109,0,.2);color:#ff6d00;">⚡ EXPRESS</span>' : ''}
+      </div>`;
+    }).join('');
+  });
+}
+
+db.ref('jobs').on('value', s => render(s.val()||{}));
+</script>
+</body>
+</html>

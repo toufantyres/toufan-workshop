@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Toufan — Reception Display</title>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@600;700&family=Exo+2:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+* { box-sizing:border-box; margin:0; padding:0; }
+html,body { height:100vh; overflow:hidden; background:#040404; color:#f0f0f0; font-family:'Exo 2',sans-serif; }
+
+/* HEADER */
+.header {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:12px 40px;
+  background:#070707;
+  border-bottom:4px solid #f0a500;
+  height:80px;
+  flex-shrink:0;
+}
+.logo-wrap .logo { font-family:'Rajdhani',sans-serif; font-size:44px; font-weight:700; color:#f0a500; letter-spacing:5px; }
+.logo-wrap .sub  { font-size:12px; color:#444; letter-spacing:2px; margin-top:1px; }
+.clock-wrap { text-align:right; }
+.clock { font-family:'Rajdhani',sans-serif; font-size:52px; font-weight:700; color:#fff; letter-spacing:3px; line-height:1; }
+.datestr { font-size:13px; color:#555; letter-spacing:1px; margin-top:3px; }
+
+/* TICKER */
+.ticker { height:42px; background:#f0a500; overflow:hidden; display:flex; align-items:center; flex-shrink:0; }
+.ticker-inner { display:flex; animation:scroll 45s linear infinite; white-space:nowrap; gap:100px; }
+@keyframes scroll { 0%{transform:translateX(0);} 100%{transform:translateX(-50%);} }
+.titem { font-family:'Rajdhani',sans-serif; font-size:17px; font-weight:700; color:#000; letter-spacing:1px; flex-shrink:0; }
+
+/* MAIN */
+.main { display:flex; height:calc(100vh - 122px); }
+
+/* LEFT PANEL - STATUS */
+.left {
+  flex:1.2;
+  padding:20px 28px;
+  border-right:1px solid #111;
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+.panel-title {
+  font-family:'Rajdhani',sans-serif;
+  font-size:14px; font-weight:700; color:#333;
+  letter-spacing:3px; text-transform:uppercase;
+  margin-bottom:4px;
+}
+.srow {
+  display:flex; align-items:center; justify-content:space-between;
+  background:#0c0c0c; border:1px solid #161616; border-radius:10px;
+  padding:14px 20px;
+}
+.srow-left { display:flex; align-items:center; gap:14px; }
+.sicon { font-size:30px; }
+.sname { font-family:'Rajdhani',sans-serif; font-size:22px; font-weight:700; }
+.sdesc { font-size:12px; color:#333; margin-top:2px; }
+.scnt  { font-family:'Rajdhani',sans-serif; font-size:44px; font-weight:700; }
+
+/* WELCOME ROTATE */
+.welcome {
+  margin-top:auto;
+  padding-top:12px;
+  text-align:center;
+  font-family:'Rajdhani',sans-serif;
+  font-size:18px;
+  color:#2a2a2a;
+  letter-spacing:2px;
+  min-height:28px;
+}
+
+/* RIGHT PANEL - READY */
+.right {
+  flex:1;
+  padding:20px 28px;
+  display:flex;
+  flex-direction:column;
+  background:#060606;
+}
+.ready-title {
+  font-family:'Rajdhani',sans-serif;
+  font-size:22px; font-weight:700;
+  color:#00e676; letter-spacing:3px;
+  display:flex; align-items:center; gap:10px;
+  margin-bottom:14px;
+  flex-shrink:0;
+}
+.rdot { width:12px; height:12px; background:#00e676; border-radius:50%; animation:pulse 1.4s infinite; flex-shrink:0; }
+@keyframes pulse { 0%,100%{opacity:1;transform:scale(1);} 50%{opacity:0.2;transform:scale(0.6);} }
+
+.rcard {
+  background:linear-gradient(135deg,#081408,#050e05);
+  border:2px solid #00e676;
+  border-radius:14px;
+  padding:20px 24px;
+  margin-bottom:12px;
+  animation:slidein 0.5s ease;
+  flex-shrink:0;
+}
+@keyframes slidein { from{opacity:0;transform:translateX(16px);} to{opacity:1;} }
+.rplate   { font-family:'Rajdhani',sans-serif; font-size:56px; font-weight:700; color:#00e676; letter-spacing:4px; line-height:1; }
+.rvehicle { font-size:16px; color:#666; margin-top:4px; }
+.rcustomer{ font-size:20px; color:#fff; font-weight:600; margin-top:8px; }
+.rmsg {
+  margin-top:12px;
+  background:rgba(0,230,118,0.08);
+  border:1px solid rgba(0,230,118,0.15);
+  border-radius:8px;
+  padding:10px 14px;
+  font-size:14px;
+  color:#00e676;
+  letter-spacing:0.5px;
+}
+
+.no-ready {
+  text-align:center;
+  padding:30px 20px;
+  color:#1a1a1a;
+  font-family:'Rajdhani',sans-serif;
+  font-size:20px;
+  letter-spacing:2px;
+  flex-shrink:0;
+}
+
+/* BOTTOM INFO */
+.info-boxes {
+  margin-top:auto;
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+.ibox {
+  background:#0c0c0c;
+  border:1px solid #161616;
+  border-radius:10px;
+  padding:12px 18px;
+}
+.ibox-title { font-family:'Rajdhani',sans-serif; font-size:11px; color:#333; letter-spacing:2px; text-transform:uppercase; margin-bottom:6px; }
+.ibox-val   { font-family:'Rajdhani',sans-serif; font-size:20px; font-weight:700; color:#f0a500; }
+.ibox-sub   { font-size:12px; color:#444; margin-top:3px; }
+.promise-list { display:flex; flex-direction:column; gap:4px; }
+.promise-item { font-size:13px; color:#444; display:flex; align-items:center; gap:8px; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="logo-wrap">
+    <div class="logo">🔥 TOUFAN</div>
+    <div class="sub">Your Trusted Auto Care Partner · دائماً في خدمتكم</div>
+  </div>
+  <div class="clock-wrap">
+    <div class="clock" id="clock">--:--</div>
+    <div class="datestr" id="datestr">---</div>
+  </div>
+</div>
+
+<div class="ticker">
+  <div class="ticker-inner">
+    <span class="titem">📞 Auto Care: +971 50 537 0755 · Auto Services: +971 55 740 0594 · Al Shmal: +971 4 255 7448</span>
+    <span class="titem">📍 Al Khabaisi, Deira, Dubai, UAE · TRN: 104126278100003</span>
+    <span class="titem">✅ Accepted: Cash · Card · Bank Transfer · Tabby · Tamara · Yusr · Cheque</span>
+    <span class="titem">📞 Auto Care: +971 50 537 0755 · Auto Services: +971 55 740 0594 · Al Shmal: +971 4 255 7448</span>
+    <span class="titem">📍 Al Khabaisi, Deira, Dubai, UAE · TRN: 104126278100003</span>
+    <span class="titem">✅ Accepted: Cash · Card · Bank Transfer · Tabby · Tamara · Yusr · Cheque</span>
+  </div>
+</div>
+
+<div class="main">
+  <!-- LEFT: STATUS -->
+  <div class="left">
+    <div class="panel-title">Live Vehicle Status</div>
+    <div id="status-rows"></div>
+    <div class="welcome" id="welcome-msg">Thank you for choosing Toufan · شكراً لاختياركم توفان</div>
+  </div>
+
+  <!-- RIGHT: READY + INFO -->
+  <div class="right">
+    <div class="ready-title"><span class="rdot"></span>Ready for Collection</div>
+    <div id="ready-list"></div>
+    <div class="info-boxes">
+      <div class="ibox">
+        <div class="ibox-title">📶 Complimentary WiFi</div>
+        <div class="ibox-val">Toufan_Guest</div>
+        <div class="ibox-sub">Password: toufan2024</div>
+      </div>
+      <div class="ibox">
+        <div class="ibox-title">Our Promise</div>
+        <div class="promise-list">
+          <div class="promise-item">✅ Professional certified technicians</div>
+          <div class="promise-item">✅ Genuine & quality parts only</div>
+          <div class="promise-item">✅ Transparent pricing — no surprises</div>
+          <div class="promise-item">✅ UAE VAT tax invoice provided</div>
+          <div class="promise-item">⭐ Please leave us a Google Review!</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+<script>
+firebase.initializeApp({
+  apiKey:"AIzaSyBdeMGPYUEErc_aDwrp8r734Hsxn8e0_cw",
+  authDomain:"toufan-garage.firebaseapp.com",
+  databaseURL:"https://toufan-garage-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId:"toufan-garage",
+  appId:"1:708520067605:web:4e5d6e14cb3be9cba4041c"
+});
+const db = firebase.database();
+
+// Clock
+function tick() {
+  const n = new Date();
+  document.getElementById('clock').textContent = n.toLocaleTimeString('en-AE',{hour:'2-digit',minute:'2-digit'});
+  document.getElementById('datestr').textContent = n.toLocaleDateString('en-AE',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+}
+setInterval(tick,1000); tick();
+
+// Welcome rotate
+const msgs = [
+  'Thank you for choosing Toufan · شكراً لاختياركم توفان',
+  'Sit back and relax — we\'re taking care of your vehicle',
+  'Coffee is available at the reception · القهوة متاحة في الاستقبال',
+  'For any questions, please speak to our friendly staff',
+  'We use only quality parts for your safety',
+  'Your satisfaction is our top priority · رضاكم هو هدفنا',
+];
+let mi = 0;
+setInterval(()=>{ mi=(mi+1)%msgs.length; document.getElementById('welcome-msg').textContent=msgs[mi]; }, 5000);
+
+// Status config
+const STATUSES = [
+  {key:'diagnostic', icon:'⚙️', label:'Under Diagnostic',  desc:'Vehicle being assessed by our technicians', color:'#ff4444'},
+  {key:'service',    icon:'🔧', label:'In Service',         desc:'Work currently in progress',               color:'#ff8800'},
+  {key:'waiting',    icon:'📦', label:'Waiting for Parts',  desc:'Parts being sourced',                      color:'#9b59b6'},
+  {key:'quality',    icon:'🔍', label:'Quality Inspection', desc:'Final quality check underway',             color:'#2979ff'},
+  {key:'testdrive',  icon:'🚗', label:'Test Drive',         desc:'Road test in progress',                    color:'#00bcd4'},
+  {key:'ready',      icon:'✅', label:'Ready for Collection','desc':'Please proceed to billing counter',      color:'#00e676'},
+];
+
+function render(jobs) {
+  const active = Object.values(jobs).filter(j=>!['paid','hold'].includes(j.status));
+
+  // Status rows
+  document.getElementById('status-rows').innerHTML = STATUSES.map(s => {
+    const cnt = active.filter(j=>j.status===s.key).length;
+    return `<div class="srow">
+      <div class="srow-left">
+        <span class="sicon">${s.icon}</span>
+        <div>
+          <div class="sname" style="color:${s.color}">${s.label}</div>
+          <div class="sdesc">${s.desc}</div>
+        </div>
+      </div>
+      <div class="scnt" style="color:${cnt>0?s.color:'#1a1a1a'}">${cnt}</div>
+    </div>`;
+  }).join('');
+
+  // Ready vehicles
+  const readyJobs = active.filter(j=>j.status==='ready');
+  const rl = document.getElementById('ready-list');
+  if (!readyJobs.length) {
+    rl.innerHTML = '<div class="no-ready">— No vehicles ready at this moment —<br><br>We will notify you when your vehicle is ready</div>';
+  } else {
+    rl.innerHTML = readyJobs.map(j=>`
+      <div class="rcard">
+        <div class="rplate">${j.plate}</div>
+        <div class="rvehicle">${j.vehicle||''} ${j.year||''}</div>
+        <div class="rcustomer">👤 ${j.customer||'Dear Customer'}</div>
+        <div class="rmsg">✅ Your vehicle is ready! Please proceed to the billing counter.<br>مركبتك جاهزة! يرجى التوجه إلى كاونتر الدفع.</div>
+      </div>`).join('');
+  }
+}
+
+db.ref('jobs').on('value', s => render(s.val()||{}));
+render({});
+</script>
+</body>
+</html>
